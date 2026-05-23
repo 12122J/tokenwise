@@ -10,3 +10,5 @@ results/prompts/
 results/smoke-logs/
 !results/.gitkeep
 .DS_Store
+.superpowers/
+skills/my-team/

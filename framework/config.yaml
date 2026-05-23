@@ -1,0 +1,63 @@
+# Tokenwise Framework Config
+#
+# This file defines how your team's workflow skill is built.
+# Run `node scripts/build-skill.mjs` to generate the deployable skill.
+#
+# Every field with a comment is something you should customize.
+
+name: my-team  # Used as the skill folder name: skills/my-team/
+
+# ─── Task types ───────────────────────────────────────────────────────────────
+# Define the kinds of tasks your agents handle most.
+# Each type maps to a reference card that loads only when that task type is active.
+# Keep each reference card under 200 words.
+#
+# Built-in type ids (router recognizes these automatically):
+#   answer    - factual question, no code navigation needed
+#   locate    - find where something is defined or called
+#   debug     - diagnose a failure
+#   implement - add or change behavior
+#   review    - review a diff or PR
+#   plan      - design or architecture decision
+#
+# Add your own ids for domain-specific workflows (e.g. "migration", "data-pipeline").
+
+task_types:
+  - id: locate
+    reference: references/exploration.md
+
+  - id: debug
+    reference: references/debugging.md
+
+  - id: implement
+    reference: references/implementation.md
+
+  - id: review
+    reference: references/code-review.md
+
+  # Add your own task types here:
+  # - id: migration
+  #   reference: references/migration.md
+  # - id: data-pipeline
+  #   reference: references/data-pipeline.md
+
+# ─── Budgets ──────────────────────────────────────────────────────────────────
+# Describes what each budget tier means for your team.
+# The router uses these to decide how far to investigate before acting.
+# Customize the descriptions to match your codebase size and complexity.
+
+budgets:
+  S: known file, direct answer, or tiny edit
+  M: normal bugfix or small feature in a familiar area
+  L: cross-module behavior, unfamiliar area, or ambiguous impact
+  XL: architecture decision, migration, or broad investigation
+
+# ─── Evidence sources ─────────────────────────────────────────────────────────
+# Tells the router what tools to prefer for each kind of lookup.
+# You can add "codegraph: true" if CodeGraph MCP is installed.
+
+evidence:
+  structural_lookup: indexed_graph   # codegraph_context, codegraph_search
+  literal_text: rg                   # ripgrep
+  known_location: read_range         # Read specific lines, not whole files
+  unknown_area: search_first         # grep/find before reading

@@ -4,6 +4,10 @@
 "description": "Token-aware agent workflow skills, knowledge cards, and evals.",
   "type": "module",
   "scripts": {
+    "build": "node scripts/build-skill.mjs --config framework/config.yaml",
+    "build:watch": "node scripts/build-skill.mjs --config framework/config.yaml --watch",
+    "findings": "node scripts/contribute-finding.mjs list",
+    "findings:merge": "node scripts/contribute-finding.mjs merge",
     "cards": "node scripts/collect-cards.mjs",
     "count:skills": "node scripts/count-skill-words.mjs skills adapters",
     "eval:run": "node scripts/run-eval.mjs",
