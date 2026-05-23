@@ -57,43 +57,28 @@ Primary metrics:
 - skill words loaded
 - task success
 
-## Results
+## Measurement Status
 
-First real paired pilot — 6 runs across 3 task types, all succeeded.
+No valid token-savings claim exists yet.
 
-```mermaid
-xychart-beta
-    title "Token usage — Superpowers vs Tokenwise pilot (n=1 each)"
-    x-axis ["orientation", "measurement", "review"]
-    y-axis "tokens (thousands)" 0 --> 800
-    bar [263, 234, 699]
-    bar [99, 156, 765]
-```
+The first pilot (6 Codex runs) used a broken variant — the Tokenwise SKILL.md
+was not injected, so the tokenwise agent ran with a 6-bullet description instead
+of the actual router. Those results have been retracted. See
+[docs/REAL_EVAL_STATUS.md](docs/REAL_EVAL_STATUS.md) for the full post-mortem.
 
-| Task | Superpowers | Tokenwise | Δ |
-|---|---:|---:|---:|
-| orientation | 263k | 99k | −62% |
-| measurement | 234k | 156k | −33% |
-| review | 699k | 765k | +9% |
-
-Median: **−33%**. Review task regressed.
-
-**Caveat:** the pilot ran without proper skill injection — the tokenwise variant
-received behavioral guidelines only, not the actual SKILL.md router. The
-comparison is "full Superpowers plugin vs lightweight prompt guidance." Results
-are directional, not definitive. See
-[docs/REAL_EVAL_STATUS.md](docs/REAL_EVAL_STATUS.md) for the full analysis and
-the variant fix that makes future runs valid.
+The variant is now fixed. The first valid paired run (Claude Code, orientation
+task) confirmed the router is active and behaves correctly — it classified the
+task, loaded exactly one reference, and stopped. Token counts were essentially
+equal to Superpowers on that task. A broader comparison across task types is
+pending.
 
 ## Current State
 
 - 91 evidence cards across 8 categories
 - Runtime skill body: under 300 words
 - Active skill/adapters surface: under 1,700 words
-- Real paired pilot: 6/6 runs succeeded; directional token savings observed
-  (see [docs/REAL_EVAL_STATUS.md](docs/REAL_EVAL_STATUS.md) for full data and
-  caveats — the first pilot ran without proper skill injection and results
-  should not be treated as definitive)
+- Variant fix applied: `evals/variants/tokenwise.md` now embeds the full router
+- First valid run: router confirmed active, pending broader task coverage
 
 ## Local Checks
 
