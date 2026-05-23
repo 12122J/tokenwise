@@ -1,0 +1,11 @@
+id: architecture-question-after-thrashing
+category: debugging
+source: superpowers-systematic-debugging
+problem: Repeated fixes expose coupling that may require design change, not another patch.
+rule: If each fix reveals a new shared-state or coupling problem, stop and discuss architecture.
+when: [three_failed_fixes, coupling_symptoms, massive_refactor_pressure]
+avoid: [continue_patch_stack]
+metrics: [fix_attempts, success]
+confidence: high
+loads_into: [references/debugging.md]
+

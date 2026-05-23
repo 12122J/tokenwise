@@ -52,6 +52,13 @@ This repo currently targets a first milestone:
 
 No token-savings claim should be made until repeatable eval results exist.
 
+## Current State
+
+- 83 evidence cards across 8 categories
+- Runtime skill body: under 300 words
+- Active skill/adapters surface: under 1,700 words
+- Private repo while the measurement claim is still unproven
+
 ## Local Checks
 
 ```bash
@@ -67,4 +74,3 @@ surface and keep `skills/tokenwise/` available as a skill folder.
 
 The adapters are intentionally small; the runtime skill loads references only
 when the task needs them.
-

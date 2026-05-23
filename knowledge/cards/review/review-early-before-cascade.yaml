@@ -1,0 +1,11 @@
+id: review-early-before-cascade
+category: review
+source: superpowers-requesting-code-review
+problem: Issues compound when review happens only after many tasks.
+rule: Review after major tasks or checkpoints before building more on top.
+when: [major_feature, task_checkpoint, before_merge]
+avoid: [late_only_review]
+metrics: [findings_count, success]
+confidence: high
+loads_into: [references/review.md]
+

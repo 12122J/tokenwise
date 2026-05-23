@@ -1,0 +1,11 @@
+id: fix-code-not-test-in-green
+category: implementation
+source: superpowers-test-driven-development
+problem: Agents change the test during green phase to fit implementation.
+rule: If the red test is valid, fix production code rather than weakening the test.
+when: [tdd_green_phase, failing_test_after_implementation]
+avoid: [test_weakened_to_pass]
+metrics: [tests_run, success]
+confidence: high
+loads_into: [references/implementation.md]
+

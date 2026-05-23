@@ -1,0 +1,11 @@
+id: red-green-regression-proof
+category: verification
+source: superpowers-verification-before-completion
+problem: A regression test that only passes may not prove it catches the bug.
+rule: For critical regressions, prove the test fails without the fix and passes with it.
+when: [regression_test, critical_bug]
+avoid: [pass_only_regression_claim]
+metrics: [tests_run, success]
+confidence: high
+loads_into: [references/verification.md]
+

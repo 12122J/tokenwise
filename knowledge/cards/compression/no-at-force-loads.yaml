@@ -1,0 +1,11 @@
+id: no-at-force-loads
+category: compression
+source: superpowers-writing-skills
+problem: Direct force-loaded references burn context before they are needed.
+rule: Reference sub-skills and files by name/path without syntax that auto-loads content.
+when: [skill_authoring, cross_reference]
+avoid: [force_load_reference]
+metrics: [skill_words_loaded, total_tokens]
+confidence: high
+loads_into: [references/measurement.md]
+

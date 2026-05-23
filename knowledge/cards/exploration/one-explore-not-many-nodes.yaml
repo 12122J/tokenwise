@@ -1,0 +1,11 @@
+id: one-explore-not-many-nodes
+category: exploration
+source: codegraph-server-instructions
+problem: Agents loop over many single-symbol reads and repeat surrounding context.
+rule: Use one grouped exploration/source call for several related symbols.
+when: [related_symbols, area_survey, multi_file_context]
+avoid: [many_node_reads]
+metrics: [codegraph_calls, file_reads, total_tokens]
+confidence: high
+loads_into: [references/exploration.md]
+

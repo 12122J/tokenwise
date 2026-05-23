@@ -25,6 +25,8 @@ Exit criteria:
 
 Goal: turn existing knowledge into evidence cards.
 
+Status: first source-mining batch complete.
+
 Sources:
 
 - Superpowers skills and prompts
@@ -69,4 +71,3 @@ Initial claim target:
 
 If the data does not support the claim, revise the skill and cards before
 publishing.
-

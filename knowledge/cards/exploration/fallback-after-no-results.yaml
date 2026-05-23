@@ -1,0 +1,11 @@
+id: fallback-after-no-results
+category: exploration
+source: codegraph-installer-instructions
+problem: Agents stay on one failed lookup mode instead of switching evidence source.
+rule: If graph lookup returns no usable result, switch to literal search or file listing with a narrower query.
+when: [no_graph_result, unsupported_language, generated_code]
+avoid: [same_failed_query_loop]
+metrics: [tool_calls, total_tokens, success]
+confidence: medium
+loads_into: [references/exploration.md]
+

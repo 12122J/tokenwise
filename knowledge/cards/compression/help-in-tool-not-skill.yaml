@@ -1,0 +1,11 @@
+id: help-in-tool-not-skill
+category: compression
+source: superpowers-writing-skills
+problem: Skills repeat command flags and API details that tools can report themselves.
+rule: Put detailed CLI options in tool help; keep the skill at selection and workflow level.
+when: [script_documentation, skill_authoring]
+avoid: [flag_catalog_in_skill]
+metrics: [skill_words_loaded]
+confidence: high
+loads_into: [references/measurement.md]
+

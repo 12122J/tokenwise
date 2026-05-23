@@ -1,0 +1,11 @@
+id: route-review-separately
+category: workflow-routing
+source: superpowers-requesting-code-review
+problem: Review work gets treated like implementation and misses finding-first output.
+rule: Route diff/PR inspection to review workflow instead of implementation workflow.
+when: [code_review, pr_review, current_diff]
+avoid: [summary_instead_of_review]
+metrics: [findings_count, success]
+confidence: high
+loads_into: [references/workflow-routing.md]
+

@@ -1,0 +1,11 @@
+id: description-is-trigger-not-workflow
+category: compression
+source: superpowers-writing-skills
+problem: Descriptions that summarize workflow cause agents to shortcut without reading the skill.
+rule: Write descriptions as trigger conditions, not process summaries.
+when: [skill_authoring, skill_metadata]
+avoid: [workflow_in_description]
+metrics: [task_success]
+confidence: high
+loads_into: [references/measurement.md]
+

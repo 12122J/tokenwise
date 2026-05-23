@@ -1,0 +1,11 @@
+id: test-each-risky-review-fix
+category: review
+source: superpowers-receiving-code-review
+problem: Batched review fixes make regressions hard to attribute.
+rule: Implement and test risky review fixes one item at a time.
+when: [multi_item_feedback, complex_fix]
+avoid: [batch_without_testing]
+metrics: [tests_run, success]
+confidence: high
+loads_into: [references/review.md]
+

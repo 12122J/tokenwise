@@ -1,0 +1,11 @@
+id: lint-is-not-build
+category: verification
+source: superpowers-verification-before-completion
+problem: Agents treat linter success as compile/build success.
+rule: Match the verification command to the claim being made.
+when: [build_claim, lint_claim, test_claim]
+avoid: [wrong_verification_for_claim]
+metrics: [commands_run, failures_caught]
+confidence: high
+loads_into: [references/verification.md]
+

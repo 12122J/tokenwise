@@ -1,0 +1,11 @@
+id: no-reverify-ast-with-grep
+category: exploration
+source: codegraph-installer-instructions
+problem: Agents re-run grep to confirm facts already returned from AST-derived graph data.
+rule: Trust indexed structural results unless stale, ambiguous, or contradicted.
+when: [definition_lookup, caller_lookup, impact_lookup]
+avoid: [redundant_grep_verification]
+metrics: [grep_calls, total_tokens]
+confidence: high
+loads_into: [references/exploration.md]
+

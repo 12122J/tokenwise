@@ -1,0 +1,11 @@
+id: process-before-implementation
+category: workflow-routing
+source: superpowers-using-superpowers
+problem: Agents jump into implementation before deciding which process risk applies.
+rule: Route to process discipline before implementation details when risk is non-trivial.
+when: [creative_work, bugfix, multi_step_change]
+avoid: [implementation_before_route]
+metrics: [success, fix_attempts]
+confidence: high
+loads_into: [references/workflow-routing.md]
+

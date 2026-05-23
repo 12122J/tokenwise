@@ -1,0 +1,11 @@
+id: one-level-references
+category: compression
+source: official-skills-docs
+problem: Deep reference chains are hard for agents to discover and may cause partial reads.
+rule: Link all major references directly from SKILL.md and avoid nested reference dependency chains.
+when: [skill_structure, progressive_disclosure]
+avoid: [deep_reference_chain]
+metrics: [skill_words_loaded, success]
+confidence: high
+loads_into: [references/measurement.md]
+

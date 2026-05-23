@@ -1,0 +1,11 @@
+id: user-instructions-first
+category: workflow-routing
+source: superpowers-using-superpowers
+problem: Workflow rules can override the user's explicit intent if priority is unclear.
+rule: Treat user instructions as higher priority than workflow skill defaults.
+when: [conflicting_instruction, user_override]
+avoid: [workflow_over_user]
+metrics: [success]
+confidence: high
+loads_into: [references/workflow-routing.md]
+

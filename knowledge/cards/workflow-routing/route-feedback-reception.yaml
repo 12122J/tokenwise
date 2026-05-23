@@ -1,0 +1,11 @@
+id: route-feedback-reception
+category: workflow-routing
+source: superpowers-receiving-code-review
+problem: Agents blindly implement external feedback without checking technical fit.
+rule: Route received review comments through feedback evaluation before editing.
+when: [review_feedback, requested_changes, external_reviewer]
+avoid: [blind_feedback_implementation]
+metrics: [false_positive_count, success]
+confidence: high
+loads_into: [references/workflow-routing.md]
+

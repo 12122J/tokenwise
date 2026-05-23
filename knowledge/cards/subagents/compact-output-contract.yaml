@@ -1,0 +1,11 @@
+id: compact-output-contract
+category: subagents
+source: tokenwise-design
+problem: Subagents return long narratives that do not drive a decision.
+rule: Require compact output: status, files changed, evidence, blockers, next action.
+when: [subagent_prompt, code_review_agent, research_agent]
+avoid: [narrative_agent_report]
+metrics: [summary_words, total_tokens]
+confidence: medium
+loads_into: [references/subagents.md]
+

@@ -1,0 +1,11 @@
+id: read-full-output
+category: verification
+source: superpowers-verification-before-completion
+problem: Agents see command completion but miss failures or warnings in output.
+rule: Read full command output and exit code before reporting status.
+when: [verification_command, test_run, build_run]
+avoid: [skim_output]
+metrics: [commands_run, failures_caught, success]
+confidence: high
+loads_into: [references/verification.md]
+

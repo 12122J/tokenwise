@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tokenwise eval run result",
+  "type": "object",
+  "required": ["task_id", "variant", "success", "total_tokens"],
+  "properties": {
+    "task_id": { "type": "string" },
+    "variant": {
+      "type": "string",
+      "enum": ["control", "superpowers", "codegraph", "tokenwise", "tokenwise-codegraph"]
+    },
+    "success": { "type": "boolean" },
+    "input_tokens": { "type": "number" },
+    "output_tokens": { "type": "number" },
+    "total_tokens": { "type": "number" },
+    "cost_usd": { "type": "number" },
+    "duration_ms": { "type": "number" },
+    "tool_calls": { "type": "number" },
+    "file_reads": { "type": "number" },
+    "grep_calls": { "type": "number" },
+    "codegraph_calls": { "type": "number" },
+    "skill_words_loaded": { "type": "number" },
+    "fix_attempts": { "type": "number" },
+    "tests_run": { "type": "number" },
+    "commands_run": { "type": "number" },
+    "changed_files": { "type": "number" },
+    "findings_count": { "type": "number" },
+    "notes": { "type": "string" }
+  },
+  "additionalProperties": true
+}
+

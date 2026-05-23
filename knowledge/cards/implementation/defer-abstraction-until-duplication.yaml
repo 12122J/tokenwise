@@ -1,0 +1,11 @@
+id: defer-abstraction-until-duplication
+category: implementation
+source: superpowers-writing-plans
+problem: Agents introduce abstractions before complexity exists.
+rule: Add abstractions only when they remove real duplication or clarify a stable boundary.
+when: [implementation_design, refactor]
+avoid: [premature_abstraction]
+metrics: [changed_files, total_tokens]
+confidence: medium
+loads_into: [references/implementation.md]
+

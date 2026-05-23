@@ -1,0 +1,11 @@
+id: eval-before-claim
+category: compression
+source: tokenwise-design
+problem: Token-saving claims become marketing unless tied to comparable runs.
+rule: Require paired eval results before claiming savings.
+when: [public_claim, readme_metrics, release_notes]
+avoid: [unmeasured_savings_claim]
+metrics: [total_tokens, success]
+confidence: high
+loads_into: [references/measurement.md]
+

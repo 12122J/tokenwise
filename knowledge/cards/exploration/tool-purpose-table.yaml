@@ -1,0 +1,11 @@
+id: tool-purpose-table
+category: exploration
+source: codegraph-installer-instructions
+problem: Agents pick tools by habit rather than intent.
+rule: Maintain a tool-purpose map so each lookup begins with the right tool class.
+when: [tool_selection, unfamiliar_repo]
+avoid: [habitual_tool_use]
+metrics: [tool_calls, total_tokens]
+confidence: high
+loads_into: [references/exploration.md]
+

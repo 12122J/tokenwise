@@ -1,0 +1,11 @@
+id: find-working-example
+category: debugging
+source: superpowers-systematic-debugging
+problem: Broken code is fixed in isolation despite similar working patterns nearby.
+rule: Find a working example in the same codebase and compare differences.
+when: [pattern_bug, framework_usage, unfamiliar_stack]
+avoid: [invent_pattern_from_memory]
+metrics: [file_reads, success]
+confidence: high
+loads_into: [references/debugging.md]
+

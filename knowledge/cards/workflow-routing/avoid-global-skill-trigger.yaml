@@ -1,0 +1,11 @@
+id: avoid-global-skill-trigger
+category: workflow-routing
+source: tokenwise-design
+problem: Always-on skill invocation creates token cascades.
+rule: Trigger Tokenwise broadly, but load detailed workflow references narrowly.
+when: [frequent_skill, meta_workflow]
+avoid: [all_skills_all_the_time]
+metrics: [skills_loaded, skill_words_loaded, total_tokens]
+confidence: medium
+loads_into: [references/workflow-routing.md]
+

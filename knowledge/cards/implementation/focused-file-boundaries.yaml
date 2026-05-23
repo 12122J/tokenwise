@@ -1,0 +1,11 @@
+id: focused-file-boundaries
+category: implementation
+source: superpowers-writing-plans
+problem: Large files force agents to keep too much unrelated context in mind.
+rule: Prefer focused files and clear interfaces when new code would enlarge an already broad file.
+when: [new_module, modifying_large_file]
+avoid: [grow_god_file]
+metrics: [file_reads, total_tokens, success]
+confidence: medium
+loads_into: [references/implementation.md]
+

@@ -1,0 +1,11 @@
+id: separate-facts-from-procedure
+category: workflow-routing
+source: official-skills-docs
+problem: Agent instruction files become heavy when procedures and reference facts are mixed.
+rule: Put stable project facts in adapters and task procedures in skills/references.
+when: [adapter_design, skill_packaging]
+avoid: [large_always_loaded_agents_md]
+metrics: [skill_words_loaded, total_tokens]
+confidence: high
+loads_into: [references/workflow-routing.md]
+

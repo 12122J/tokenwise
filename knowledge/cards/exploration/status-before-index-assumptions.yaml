@@ -1,0 +1,11 @@
+id: status-before-index-assumptions
+category: exploration
+source: codegraph-server-instructions
+problem: Agents assume an index is ready and mis-handle missing or stale graph data.
+rule: Check index status when graph tools fail, return empty, or seem stale.
+when: [empty_graph_result, mcp_not_initialized, stale_context]
+avoid: [assuming_index_ready]
+metrics: [failed_queries, codegraph_calls, total_tokens]
+confidence: high
+loads_into: [references/exploration.md]
+

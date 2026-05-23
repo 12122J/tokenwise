@@ -1,0 +1,11 @@
+id: no-fix-before-phase-one
+category: debugging
+source: superpowers-systematic-debugging
+problem: Agents propose fixes before root-cause investigation is complete.
+rule: Do not propose or implement fixes until failure, reproduction, recent changes, and likely path are known.
+when: [bugfix, failing_test, unexpected_behavior]
+avoid: [premature_fix]
+metrics: [fix_attempts, total_tokens, success]
+confidence: high
+loads_into: [references/debugging.md]
+

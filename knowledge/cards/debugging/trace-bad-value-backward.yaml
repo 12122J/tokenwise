@@ -1,0 +1,11 @@
+id: trace-bad-value-backward
+category: debugging
+source: superpowers-systematic-debugging
+problem: Agents fix the line throwing the error instead of the source of the bad value.
+rule: Trace bad values backward through callers until the origin is found.
+when: [bad_value, deep_stack_trace, null_or_empty_state]
+avoid: [symptom_line_patch]
+metrics: [fix_attempts, file_reads, success]
+confidence: high
+loads_into: [references/debugging.md]
+

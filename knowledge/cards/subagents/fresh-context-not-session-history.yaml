@@ -1,0 +1,11 @@
+id: fresh-context-not-session-history
+category: subagents
+source: superpowers-dispatching-parallel-agents
+problem: Subagents inherit or receive too much irrelevant session history.
+rule: Construct the minimum task-local context instead of passing full conversation history.
+when: [subagent_prompt, delegated_work]
+avoid: [full_history_delegation]
+metrics: [duplicate_reads, total_tokens, success]
+confidence: high
+loads_into: [references/subagents.md]
+

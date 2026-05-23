@@ -1,0 +1,11 @@
+id: review-agent-output
+category: subagents
+source: superpowers-verification-before-completion
+problem: Agents trust subagent success reports without checking actual changes.
+rule: Verify subagent output through diff, tests, or source evidence before accepting.
+when: [subagent_completed, delegated_patch]
+avoid: [trust_agent_report]
+metrics: [commands_run, success]
+confidence: high
+loads_into: [references/subagents.md]
+

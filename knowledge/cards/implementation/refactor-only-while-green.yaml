@@ -1,0 +1,11 @@
+id: refactor-only-while-green
+category: implementation
+source: superpowers-test-driven-development
+problem: Refactors during red/unknown state create ambiguous failures.
+rule: Refactor only after targeted tests are green, and keep them green.
+when: [cleanup, refactor_after_feature]
+avoid: [refactor_while_red]
+metrics: [tests_run, success]
+confidence: high
+loads_into: [references/implementation.md]
+

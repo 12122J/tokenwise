@@ -1,0 +1,11 @@
+id: disjoint-write-sets
+category: subagents
+source: superpowers-subagent-driven-development
+problem: Multiple agents edit overlapping files and create merge conflicts.
+rule: Assign disjoint file/module ownership for parallel code-changing agents.
+when: [parallel_implementation, multi_agent_edit]
+avoid: [overlapping_write_scope]
+metrics: [subagent_count, changed_files, success]
+confidence: high
+loads_into: [references/subagents.md]
+

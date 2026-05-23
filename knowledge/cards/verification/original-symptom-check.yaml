@@ -1,0 +1,11 @@
+id: original-symptom-check
+category: verification
+source: superpowers-verification-before-completion
+problem: A changed code path may not prove the reported bug is fixed.
+rule: Verify the original symptom or regression test, not just adjacent tests.
+when: [bugfix, regression]
+avoid: [assumed_fix_from_code_change]
+metrics: [tests_run, success]
+confidence: high
+loads_into: [references/verification.md]
+

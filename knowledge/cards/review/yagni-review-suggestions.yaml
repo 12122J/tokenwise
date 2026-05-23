@@ -1,0 +1,11 @@
+id: yagni-review-suggestions
+category: review
+source: superpowers-receiving-code-review
+problem: Review suggestions can add unused professional-looking features.
+rule: Check actual usage before implementing suggested capability expansions.
+when: [review_suggests_feature, proper_implementation_request]
+avoid: [unused_feature_from_review]
+metrics: [changed_files, success]
+confidence: high
+loads_into: [references/review.md]
+

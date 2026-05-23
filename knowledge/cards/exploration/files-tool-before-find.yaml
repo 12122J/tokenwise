@@ -1,0 +1,11 @@
+id: files-tool-before-find
+category: exploration
+source: codegraph-server-instructions
+problem: Agents run broad filesystem scans when indexed file structure can answer.
+rule: Use indexed file listing for project tree questions when available.
+when: [directory_question, file_structure_lookup]
+avoid: [find_for_indexed_tree]
+metrics: [tool_calls, total_tokens]
+confidence: medium
+loads_into: [references/exploration.md]
+

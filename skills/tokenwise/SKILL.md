@@ -26,6 +26,7 @@ Spend context only when it changes the next action.
    - debugging: `references/debugging.md`
    - implementation: `references/implementation.md`
    - subagents: `references/subagents.md`
+   - review: `references/review.md`
    - verification: `references/verification.md`
    - measurement: `references/measurement.md`
 5. Stop expanding context once you can name the next edit, command, answer, or blocker.
@@ -42,4 +43,3 @@ Spend context only when it changes the next action.
 ## Output
 
 When the task is non-trivial, report the budget, evidence path, and verification used.
-

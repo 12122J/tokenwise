@@ -1,0 +1,11 @@
+id: critical-path-stays-local
+category: subagents
+source: superpowers-dispatching-parallel-agents
+problem: Delegating the immediate blocker causes idle waiting and duplicated reasoning.
+rule: Keep the next critical-path task local; delegate sidecar work that can run independently.
+when: [parallel_planning, immediate_blocker]
+avoid: [delegate_blocking_next_step]
+metrics: [subagent_count, duration_ms, success]
+confidence: high
+loads_into: [references/subagents.md]
+

@@ -1,0 +1,11 @@
+id: diff-range-review-context
+category: review
+source: superpowers-requesting-code-review
+problem: Review without a base/head range becomes vague and misses changed behavior.
+rule: Define the review target with base and head commits or an explicit diff.
+when: [code_review, pr_review]
+avoid: [review_without_scope]
+metrics: [findings_count, file_reads]
+confidence: high
+loads_into: [references/review.md]
+

@@ -1,0 +1,11 @@
+id: clarify-before-partial-feedback
+category: review
+source: superpowers-receiving-code-review
+problem: Implementing understood feedback while other items remain unclear can create wrong partial fixes.
+rule: Clarify unclear review items before implementing a multi-item batch.
+when: [multi_item_feedback, unclear_feedback]
+avoid: [partial_feedback_implementation]
+metrics: [success]
+confidence: high
+loads_into: [references/review.md]
+

@@ -1,0 +1,11 @@
+id: verify-red-correctly
+category: implementation
+source: superpowers-test-driven-development
+problem: A failing test can fail for typos or setup errors rather than the intended missing behavior.
+rule: Confirm the test fails for the expected reason before implementing.
+when: [tdd_red_phase, new_test]
+avoid: [wrong_red_failure]
+metrics: [test_first, tests_run, success]
+confidence: high
+loads_into: [references/implementation.md]
+

@@ -1,0 +1,11 @@
+id: pushback-with-evidence
+category: review
+source: superpowers-receiving-code-review
+problem: Agents accept incorrect feedback to avoid disagreement.
+rule: Push back with code, tests, or constraints when feedback is wrong.
+when: [incorrect_feedback, context_missing_reviewer]
+avoid: [performative_agreement]
+metrics: [false_positive_count, success]
+confidence: high
+loads_into: [references/review.md]
+

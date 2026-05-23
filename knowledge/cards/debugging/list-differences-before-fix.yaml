@@ -1,0 +1,11 @@
+id: list-differences-before-fix
+category: debugging
+source: superpowers-systematic-debugging
+problem: Agents assume a difference cannot matter before proving it.
+rule: List differences between working and broken examples before choosing a fix.
+when: [comparison_debugging, similar_code_exists]
+avoid: [dismiss_small_difference]
+metrics: [fix_attempts, success]
+confidence: high
+loads_into: [references/debugging.md]
+

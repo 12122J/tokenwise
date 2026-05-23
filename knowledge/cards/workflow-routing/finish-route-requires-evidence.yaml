@@ -1,0 +1,11 @@
+id: finish-route-requires-evidence
+category: workflow-routing
+source: superpowers-verification-before-completion
+problem: Agents move to final response or commit flow before fresh verification.
+rule: Route completion claims through verification evidence.
+when: [final_response, commit, push, pr_creation]
+avoid: [success_claim_without_evidence]
+metrics: [commands_run, success]
+confidence: high
+loads_into: [references/workflow-routing.md]
+

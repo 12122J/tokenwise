@@ -1,0 +1,11 @@
+id: findings-before-summary
+category: review
+source: engineering-code-review
+problem: Agents summarize changes instead of surfacing bugs and risks.
+rule: Lead review output with concrete findings ordered by severity.
+when: [review_request, pr_review, diff_review]
+avoid: [summary_first_review]
+metrics: [findings_count, success]
+confidence: high
+loads_into: [references/review.md]
+

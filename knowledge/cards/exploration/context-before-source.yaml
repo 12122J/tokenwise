@@ -1,0 +1,11 @@
+id: context-before-source
+category: exploration
+source: codegraph-server-instructions
+problem: Agents jump directly to source reads when a task-level context call would identify the relevant symbols.
+rule: Use task/context lookup before source lookup for unfamiliar areas.
+when: [architecture_question, unfamiliar_area, feature_orientation]
+avoid: [source_first_exploration]
+metrics: [codegraph_calls, file_reads, total_tokens]
+confidence: high
+loads_into: [references/exploration.md]
+

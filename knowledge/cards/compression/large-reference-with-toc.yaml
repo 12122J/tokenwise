@@ -1,0 +1,11 @@
+id: large-reference-with-toc
+category: compression
+source: official-skills-docs
+problem: Large references are hard to skim and select from.
+rule: Give long references a table of contents or searchable headings.
+when: [large_reference, reference_over_100_lines]
+avoid: [unstructured_large_reference]
+metrics: [file_reads, total_tokens]
+confidence: medium
+loads_into: [references/measurement.md]
+

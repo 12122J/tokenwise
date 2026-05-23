@@ -1,0 +1,11 @@
+id: skill-body-under-budget
+category: compression
+source: superpowers-writing-skills
+problem: Frequently loaded skills consume context even when most details are irrelevant.
+rule: Keep runtime skill bodies small and move detailed variants to references.
+when: [skill_authoring, frequently_loaded_skill]
+avoid: [large_hot_path_skill]
+metrics: [skill_words_loaded, total_tokens]
+confidence: high
+loads_into: [references/measurement.md]
+

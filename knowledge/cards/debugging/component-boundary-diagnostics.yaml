@@ -1,0 +1,11 @@
+id: component-boundary-diagnostics
+category: debugging
+source: superpowers-systematic-debugging
+problem: Multi-component bugs are guessed from symptoms at the final layer.
+rule: Add diagnostics at component boundaries to identify where data or config changes.
+when: [multi_component_system, ci_build_signing, api_service_database]
+avoid: [diagnostic_at_symptom_only]
+metrics: [diagnostics_added, fix_attempts, success]
+confidence: high
+loads_into: [references/debugging.md]
+

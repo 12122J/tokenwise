@@ -1,0 +1,11 @@
+id: reuse-existing-agent-for-followup
+category: subagents
+source: superpowers-dispatching-parallel-agents
+problem: Follow-up questions spawn new agents that rediscover the same context.
+rule: Reuse an existing agent for related follow-up when its context is still relevant.
+when: [subagent_followup, related_question]
+avoid: [new_agent_for_same_context]
+metrics: [subagent_count, duplicate_reads, total_tokens]
+confidence: medium
+loads_into: [references/subagents.md]
+

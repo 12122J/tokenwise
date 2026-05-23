@@ -1,0 +1,11 @@
+id: no-extra-behavior-during-green
+category: implementation
+source: superpowers-test-driven-development
+problem: Agents add options, abstractions, or edge behavior before tests require them.
+rule: During green, implement only behavior demanded by the current failing test.
+when: [feature_implementation, tdd_green_phase]
+avoid: [speculative_options, premature_abstraction]
+metrics: [changed_files, total_tokens, success]
+confidence: high
+loads_into: [references/implementation.md]
+

@@ -15,6 +15,9 @@ categories:
   subagents:
     purpose: Use delegation only when it reduces duplicated context.
     metrics: [subagent_count, duplicate_reads, total_tokens, success]
+  review:
+    purpose: Catch correctness risks without performative or broad review loops.
+    metrics: [findings_count, false_positive_count, file_reads, success]
   verification:
     purpose: Match verification breadth to changed surface and risk.
     metrics: [commands_run, duration_ms, failures_caught, success]
@@ -25,4 +28,3 @@ confidence:
   high: Repeated source or trace evidence.
   medium: Strong source guidance, limited local traces.
   low: Hypothesis pending eval.
-

@@ -1,0 +1,11 @@
+id: fresh-command-before-claim
+category: verification
+source: superpowers-verification-before-completion
+problem: Agents claim success based on expected results or previous runs.
+rule: Run a fresh relevant verification command before any completion claim.
+when: [completion_claim, final_response, commit]
+avoid: [should_pass_claim]
+metrics: [commands_run, success]
+confidence: high
+loads_into: [references/verification.md]
+

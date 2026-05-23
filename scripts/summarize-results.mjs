@@ -93,5 +93,23 @@ for (const variant of variants) {
   };
 }
 
-console.log(JSON.stringify({ runs: runs.length, by_variant: byVariant, by_task: byTask }, null, 2));
+const aggregateSavingsVsSuperpowers = {};
+for (const variant of variants) {
+  if (variant === 'superpowers') continue;
+  const savings = [];
+  for (const taskId of taskIds) {
+    const value = byTask[taskId]?.[variant]?.savings_vs_superpowers_pct;
+    if (typeof value === 'number' && Number.isFinite(value)) savings.push(value);
+  }
+  aggregateSavingsVsSuperpowers[variant] = {
+    paired_tasks: savings.length,
+    median_savings_pct: median(savings)
+  };
+}
 
+console.log(JSON.stringify({
+  runs: runs.length,
+  by_variant: byVariant,
+  savings_vs_superpowers: aggregateSavingsVsSuperpowers,
+  by_task: byTask
+}, null, 2));

@@ -1,0 +1,11 @@
+id: split-and-names-show-intent
+category: implementation
+source: superpowers-test-driven-development
+problem: Large tests with vague names hide what behavior is protected.
+rule: Use focused tests whose names describe one behavior.
+when: [test_authoring, behavior_change]
+avoid: [test1, validates_everything]
+metrics: [success]
+confidence: high
+loads_into: [references/implementation.md]
+

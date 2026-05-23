@@ -1,0 +1,11 @@
+id: no-search-node-chain-for-context
+category: exploration
+source: codegraph-server-instructions
+problem: Search followed by individual node reads costs more than a composed context lookup.
+rule: Use context lookup when the goal is task context, not a single known symbol.
+when: [task_context_needed, area_lookup]
+avoid: [search_then_node_chain]
+metrics: [tool_calls, codegraph_calls, total_tokens]
+confidence: high
+loads_into: [references/exploration.md]
+

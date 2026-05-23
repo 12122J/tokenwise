@@ -1,0 +1,11 @@
+id: check-recent-changes
+category: debugging
+source: superpowers-systematic-debugging
+problem: Agents investigate the whole system before checking what changed.
+rule: Inspect recent diffs, commits, config, and dependency changes early.
+when: [regression, new_failure, ci_failure]
+avoid: [whole_system_scan_before_diff]
+metrics: [file_reads, fix_attempts, total_tokens]
+confidence: high
+loads_into: [references/debugging.md]
+

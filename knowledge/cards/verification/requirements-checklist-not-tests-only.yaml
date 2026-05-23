@@ -1,0 +1,11 @@
+id: requirements-checklist-not-tests-only
+category: verification
+source: superpowers-verification-before-completion
+problem: Passing tests may not prove every requirement was implemented.
+rule: For planned work, verify requirements line-by-line in addition to tests.
+when: [plan_execution, feature_completion]
+avoid: [tests_pass_means_requirements_met]
+metrics: [success]
+confidence: high
+loads_into: [references/verification.md]
+
