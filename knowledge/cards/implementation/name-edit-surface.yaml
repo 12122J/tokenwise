@@ -1,0 +1,11 @@
+id: name-edit-surface
+category: implementation
+source: codegraph
+problem: Edits start before the affected files and symbols are known.
+rule: Before editing, name the files, symbols, likely callers, and verification command.
+when: [implementation, refactor]
+avoid: [edit_before_surface_known]
+metrics: [changed_files, file_reads, success]
+confidence: medium
+loads_into: [references/implementation.md]
+

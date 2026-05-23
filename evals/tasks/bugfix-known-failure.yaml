@@ -1,0 +1,17 @@
+id: bugfix-known-failure
+type: debug
+budget: M
+description: Fix a failing test with a bounded error message.
+prompt: "Fix the failing test. Do not refactor unrelated code."
+success_criteria:
+  - reads the failure before proposing fixes
+  - identifies root cause
+  - targeted test passes
+  - unrelated files are not changed
+metrics:
+  - total_tokens
+  - fix_attempts
+  - file_reads
+  - tests_run
+  - success
+

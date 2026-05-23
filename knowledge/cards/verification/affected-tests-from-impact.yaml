@@ -1,0 +1,11 @@
+id: affected-tests-from-impact
+category: verification
+source: codegraph
+problem: Agents guess test scope from filenames alone.
+rule: Use import/impact information to select affected tests when available.
+when: [shared_symbol_change, cross_module_change]
+avoid: [filename_guess_only]
+metrics: [commands_run, success, duration_ms]
+confidence: medium
+loads_into: [references/verification.md]
+

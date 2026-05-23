@@ -1,0 +1,11 @@
+id: index-lag-after-edit
+category: exploration
+source: codegraph
+problem: Agents query an index immediately after editing and mistake stale results for truth.
+rule: After writes, wait for sync or use direct file/test verification for the edited content.
+when: [post_edit_lookup, file_watcher_index]
+avoid: [immediate_index_requery]
+metrics: [failed_queries, total_tokens]
+confidence: high
+loads_into: [references/exploration.md]
+

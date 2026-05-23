@@ -1,0 +1,11 @@
+id: compact-working-set
+category: compression
+source: local-traces
+problem: Agents repeatedly rediscover the same files and symbols.
+rule: Maintain a compact working set of files, symbols, hypotheses, and commands.
+when: [multi_turn_task, long_debug_session]
+avoid: [rediscover_same_context]
+metrics: [repeated_reads, total_tokens]
+confidence: medium
+loads_into: [references/measurement.md]
+

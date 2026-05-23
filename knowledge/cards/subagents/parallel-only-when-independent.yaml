@@ -1,0 +1,11 @@
+id: parallel-only-when-independent
+category: subagents
+source: superpowers
+problem: Parallel agents create merge conflicts or duplicated work when tasks overlap.
+rule: Parallelize only independent tasks with disjoint read/write concerns.
+when: [multiple_tasks, possible_parallel_work]
+avoid: [overlapping_worker_scope]
+metrics: [subagent_count, success]
+confidence: high
+loads_into: [references/subagents.md]
+

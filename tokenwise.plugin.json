@@ -1,0 +1,23 @@
+{
+  "name": "tokenwise",
+  "version": "0.1.0",
+  "description": "Token-aware workflow skills, knowledge cards, adapters, and evals for coding agents.",
+  "skills": [
+    {
+      "name": "tokenwise",
+      "path": "skills/tokenwise"
+    }
+  ],
+  "adapters": {
+    "claude": "adapters/claude/CLAUDE.md",
+    "codex": "adapters/codex/AGENTS.md",
+    "cursor": "adapters/cursor/tokenwise.mdc",
+    "opencode": "adapters/opencode/AGENTS.md"
+  },
+  "evals": {
+    "tasks": "evals/tasks",
+    "variants": "evals/variants",
+    "rubrics": "evals/rubrics"
+  }
+}
+

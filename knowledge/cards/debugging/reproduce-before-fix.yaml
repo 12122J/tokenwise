@@ -1,0 +1,11 @@
+id: reproduce-before-fix
+category: debugging
+source: superpowers
+problem: Fixes cannot be trusted when the failure is not reproducible or bounded.
+rule: Reproduce or explain the reproduction blocker before changing production code.
+when: [bugfix, flaky_test, regression]
+avoid: [blind_patch]
+metrics: [fix_attempts, tests_run, success]
+confidence: high
+loads_into: [references/debugging.md]
+

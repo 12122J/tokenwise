@@ -1,0 +1,11 @@
+id: narrow-subagent-scope
+category: subagents
+source: superpowers
+problem: Broad subagent prompts duplicate exploration and return noisy context.
+rule: Delegate only with clear goal, owned files/modules, constraints, and output format.
+when: [parallel_work, independent_task]
+avoid: [broad_explore_agent]
+metrics: [subagent_count, duplicate_reads, total_tokens]
+confidence: high
+loads_into: [references/subagents.md]
+

@@ -1,0 +1,11 @@
+id: no-delegate-indexed-exploration
+category: subagents
+source: codegraph
+problem: Agents spawn file-reading explorers even when graph lookup can answer directly.
+rule: Use indexed lookup directly for architecture and trace questions before delegating.
+when: [codegraph_available, architecture_question, locate_task]
+avoid: [exploration_subagent_for_indexed_repo]
+metrics: [subagent_count, file_reads, total_tokens]
+confidence: high
+loads_into: [references/subagents.md]
+

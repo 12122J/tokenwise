@@ -1,0 +1,11 @@
+id: minimal-green
+category: implementation
+source: superpowers
+problem: Agents add extra features while making a test pass.
+rule: Implement the smallest change that makes the failing test pass, then refactor only while green.
+when: [tdd_green_phase]
+avoid: [yagni_expansion, opportunistic_refactor]
+metrics: [changed_files, tests_run, success]
+confidence: high
+loads_into: [references/implementation.md]
+

@@ -1,0 +1,11 @@
+id: stop-when-next-edit-known
+category: exploration
+source: superpowers
+problem: Agents continue exploring after the next action is already clear.
+rule: Stop context gathering once the next edit, answer, command, or blocker can be named.
+when: [implementation_ready, answer_ready, verification_ready]
+avoid: [just_one_more_file, redundant_confirmation]
+metrics: [file_reads, tool_calls, total_tokens]
+confidence: medium
+loads_into: [references/exploration.md]
+

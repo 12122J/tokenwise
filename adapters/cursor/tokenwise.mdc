@@ -1,0 +1,17 @@
+---
+description: Tokenwise workflow router for token-aware coding in large or unfamiliar repositories
+alwaysApply: false
+---
+
+# Tokenwise
+
+Use this rule when context may be expensive.
+
+- Classify task before exploring.
+- Use indexed/codegraph lookup for structural questions.
+- Use text search for exact strings.
+- Prefer narrow reads over whole-file reads.
+- Stop exploring once the next edit or answer is known.
+- Do not delegate broad exploration when the index can answer directly.
+- Verify with the cheapest sufficient check.
+

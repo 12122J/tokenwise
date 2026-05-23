@@ -1,0 +1,11 @@
+id: read-ranges-not-files
+category: exploration
+source: local-traces
+problem: Whole-file reads pull unrelated code into context.
+rule: When location is known, read the smallest range that contains the relevant symbol and neighboring context.
+when: [known_file, known_line, targeted_edit]
+avoid: [whole_file_read_for_known_line]
+metrics: [file_reads, total_tokens]
+confidence: medium
+loads_into: [references/exploration.md]
+

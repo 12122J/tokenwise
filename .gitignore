@@ -1,0 +1,8 @@
+node_modules/
+results/*.json
+results/*.jsonl
+results/*.csv
+results/*.md
+!results/.gitkeep
+.DS_Store
+

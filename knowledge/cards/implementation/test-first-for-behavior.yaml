@@ -1,0 +1,11 @@
+id: test-first-for-behavior
+category: implementation
+source: superpowers
+problem: Tests written after implementation often confirm the implementation rather than the requirement.
+rule: For behavior changes, write the failing test before production code.
+when: [feature, bugfix, behavior_refactor]
+avoid: [tests_after_for_new_behavior]
+metrics: [test_first, success]
+confidence: high
+loads_into: [references/implementation.md]
+

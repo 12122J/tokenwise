@@ -1,0 +1,17 @@
+id: refactor-impact
+type: implement
+budget: L
+description: Change a shared symbol or API and assess impact before editing.
+prompt: "Refactor the named shared symbol safely and update affected callers/tests."
+success_criteria:
+  - performs impact/caller analysis before editing
+  - updates affected call sites
+  - runs affected tests
+  - avoids unrelated rewrites
+metrics:
+  - total_tokens
+  - codegraph_calls
+  - file_reads
+  - changed_files
+  - success
+

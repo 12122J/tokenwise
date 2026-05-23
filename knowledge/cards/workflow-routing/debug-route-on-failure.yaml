@@ -1,0 +1,11 @@
+id: debug-route-on-failure
+category: workflow-routing
+source: superpowers
+problem: Agents patch symptoms when seeing test failures or unexpected behavior.
+rule: Route failures and unexpected behavior to debugging before implementation.
+when: [test_failure, bug_report, build_failure, unexpected_behavior]
+avoid: [quick_fix_first]
+metrics: [fix_attempts, success]
+confidence: high
+loads_into: [references/workflow-routing.md]
+

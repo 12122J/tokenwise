@@ -1,0 +1,11 @@
+id: three-failed-fixes-stop
+category: debugging
+source: superpowers
+problem: Repeated failed fixes often indicate a wrong model or architecture.
+rule: After three failed fixes, stop and reassess architecture or assumptions before continuing.
+when: [repeated_failed_fix, escalating_complexity]
+avoid: [fourth_blind_fix]
+metrics: [fix_attempts, total_tokens, success]
+confidence: medium
+loads_into: [references/debugging.md]
+

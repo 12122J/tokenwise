@@ -1,0 +1,11 @@
+id: load-one-reference-first
+category: workflow-routing
+source: official-skills-docs
+problem: A skill with many references can recreate context bloat if all are read together.
+rule: Load one reference matching the current route, then escalate only if needed.
+when: [reference_skill, progressive_disclosure]
+avoid: [read_all_references]
+metrics: [skill_words_loaded, total_tokens]
+confidence: high
+loads_into: [references/workflow-routing.md]
+

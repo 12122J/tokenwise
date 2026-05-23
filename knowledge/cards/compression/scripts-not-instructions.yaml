@@ -1,0 +1,11 @@
+id: scripts-not-instructions
+category: compression
+source: official-skills-docs
+problem: Deterministic procedures consume tokens when written as repeated prose.
+rule: Move repeatable measurement and validation into scripts whose output is compact.
+when: [repeatable_check, metric_collection, eval_parsing]
+avoid: [manual_counting, repeated_prompt_instructions]
+metrics: [skill_words_loaded, total_tokens]
+confidence: high
+loads_into: [references/measurement.md]
+

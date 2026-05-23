@@ -1,0 +1,11 @@
+id: impact-before-refactor
+category: exploration
+source: codegraph
+problem: Refactors often miss callers or tests when impact is inferred by search alone.
+rule: Run impact/caller analysis before cross-module edits.
+when: [rename, signature_change, shared_symbol_change, refactor]
+avoid: [manual_caller_walk_only]
+metrics: [codegraph_calls, file_reads, success]
+confidence: high
+loads_into: [references/exploration.md]
+

@@ -1,0 +1,11 @@
+id: graph-before-grep
+category: exploration
+source: codegraph
+problem: Agents use grep/read loops for structural code questions.
+rule: Use indexed graph lookup before literal search for definitions, callers, callees, and impact.
+when: [definition_lookup, call_trace, impact_analysis, architecture_question]
+avoid: [grep_first_for_symbols, full_file_orientation]
+metrics: [file_reads, grep_calls, codegraph_calls, total_tokens]
+confidence: high
+loads_into: [references/exploration.md]
+

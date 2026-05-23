@@ -1,0 +1,23 @@
+{
+  "name": "tokenwise",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Token-aware agent workflow skills, knowledge cards, and evals.",
+  "type": "module",
+  "scripts": {
+    "cards": "node scripts/collect-cards.mjs",
+    "count:skills": "node scripts/count-skill-words.mjs skills adapters",
+    "summarize": "node scripts/summarize-results.mjs results/runs.jsonl",
+    "check": "npm run cards && npm run count:skills"
+  },
+  "keywords": [
+    "agent-skills",
+    "token-efficiency",
+    "codegraph",
+    "superpowers",
+    "codex",
+    "claude-code"
+  ],
+  "license": "MIT"
+}
+

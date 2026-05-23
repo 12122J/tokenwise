@@ -1,0 +1,11 @@
+id: artifact-over-prose
+category: compression
+source: official-skills-docs
+problem: Long narrative summaries are hard to reuse and expensive.
+rule: Prefer structured artifacts: paths, symbols, metrics, hypotheses, diffs, commands.
+when: [handoff, progress_update, eval_result]
+avoid: [long_unstructured_summary]
+metrics: [summary_words, total_tokens]
+confidence: medium
+loads_into: [references/measurement.md]
+

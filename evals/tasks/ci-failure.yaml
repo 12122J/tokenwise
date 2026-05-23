@@ -1,0 +1,17 @@
+id: ci-failure
+type: debug
+budget: L
+description: Diagnose a CI failure from logs and local reproduction.
+prompt: "Diagnose the failing CI check and propose or implement the smallest fix."
+success_criteria:
+  - reads failing log section
+  - reproduces locally or explains why not
+  - traces failure to cause
+  - verifies fix or reports blocker
+metrics:
+  - total_tokens
+  - tool_calls
+  - fix_attempts
+  - commands_run
+  - success
+

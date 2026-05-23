@@ -1,0 +1,11 @@
+id: read-error-first
+category: debugging
+source: superpowers
+problem: Agents search or patch before reading the complete error.
+rule: Read the full error, stack trace, command, and line references before searching.
+when: [test_failure, build_failure, runtime_exception]
+avoid: [skip_stack_trace, search_before_error]
+metrics: [grep_calls, fix_attempts, total_tokens]
+confidence: high
+loads_into: [references/debugging.md]
+

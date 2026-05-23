@@ -1,0 +1,16 @@
+id: review-diff
+type: review
+budget: S
+description: Review a PR-sized diff for correctness and risk.
+prompt: "Review the current diff. Lead with concrete findings and line references."
+success_criteria:
+  - findings are grounded in changed lines
+  - severity is clear
+  - does not summarize instead of reviewing
+  - notes test gaps or residual risk
+metrics:
+  - total_tokens
+  - file_reads
+  - findings_count
+  - success
+

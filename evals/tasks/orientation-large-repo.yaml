@@ -1,0 +1,17 @@
+id: orientation-large-repo
+type: answer
+budget: M
+description: Answer an architecture question in an unfamiliar repository.
+prompt: "Explain how the selected subsystem communicates with its main dependency. Cite the key files or symbols."
+success_criteria:
+  - identifies the correct subsystem entry points
+  - cites relevant files or symbols
+  - avoids broad unrelated exploration
+metrics:
+  - total_tokens
+  - tool_calls
+  - file_reads
+  - grep_calls
+  - codegraph_calls
+  - success
+

@@ -1,0 +1,11 @@
+id: single-hypothesis
+category: debugging
+source: superpowers
+problem: Bundled fixes hide which change mattered.
+rule: State one hypothesis and test it with the smallest diagnostic or change.
+when: [root_cause_unknown, multiple_possible_causes]
+avoid: [multi_fix_batch]
+metrics: [fix_attempts, diagnostics_added, success]
+confidence: high
+loads_into: [references/debugging.md]
+

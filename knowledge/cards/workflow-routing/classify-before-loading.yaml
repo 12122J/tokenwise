@@ -1,0 +1,11 @@
+id: classify-before-loading
+category: workflow-routing
+source: official-skills-docs
+problem: Loading several plausible skills burns context before the task is understood.
+rule: Classify task type before loading heavy workflow references.
+when: [multiple_skills_may_apply, ambiguous_request]
+avoid: [speculative_skill_loading]
+metrics: [skills_loaded, skill_words_loaded, total_tokens]
+confidence: high
+loads_into: [references/workflow-routing.md]
+

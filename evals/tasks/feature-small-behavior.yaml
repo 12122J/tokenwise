@@ -1,0 +1,17 @@
+id: feature-small-behavior
+type: implement
+budget: M
+description: Add a small behavior change in a known area.
+prompt: "Add the requested behavior with a focused test and minimal implementation."
+success_criteria:
+  - writes or updates a failing test first
+  - implementation is minimal
+  - targeted test passes
+  - broader checks are reported if skipped
+metrics:
+  - total_tokens
+  - test_first
+  - changed_files
+  - tests_run
+  - success
+

@@ -1,0 +1,11 @@
+id: report-what-not-run
+category: verification
+source: superpowers
+problem: Users cannot judge residual risk if skipped checks are invisible.
+rule: Report checks run, checks skipped, and residual risk.
+when: [final_response, partial_verification]
+avoid: [implied_full_verification]
+metrics: [success]
+confidence: high
+loads_into: [references/verification.md]
+

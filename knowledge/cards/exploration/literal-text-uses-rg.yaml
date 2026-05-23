@@ -1,0 +1,11 @@
+id: literal-text-uses-rg
+category: exploration
+source: codegraph
+problem: Indexed symbol tools are weaker for exact strings, log lines, comments, and error text.
+rule: Use rg for literal text; switch to graph lookup after identifying the owning symbol or file.
+when: [error_text, log_message, copy_string, comment_search]
+avoid: [semantic_tool_for_literal_string]
+metrics: [grep_calls, file_reads, total_tokens]
+confidence: high
+loads_into: [references/exploration.md]
+

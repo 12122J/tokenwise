@@ -1,0 +1,11 @@
+id: plan-only-for-risk
+category: workflow-routing
+source: superpowers
+problem: Full plans are valuable for risky work but wasteful for tiny known-file edits.
+rule: Use written plans for L/XL scope, unclear dependencies, or multi-step implementation.
+when: [cross_module_change, migration, ambiguous_requirements]
+avoid: [full_plan_for_tiny_edit]
+metrics: [skill_words_loaded, total_tokens, success]
+confidence: medium
+loads_into: [references/workflow-routing.md]
+

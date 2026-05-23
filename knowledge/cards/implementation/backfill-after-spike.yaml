@@ -1,0 +1,11 @@
+id: backfill-after-spike
+category: implementation
+source: superpowers
+problem: Exploratory spikes become production code without regression tests.
+rule: If a spike is kept, backfill tests before final verification.
+when: [prototype_kept, exploratory_change]
+avoid: [untested_spike_shipping]
+metrics: [test_first, success]
+confidence: medium
+loads_into: [references/implementation.md]
+

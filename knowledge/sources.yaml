@@ -1,0 +1,24 @@
+sources:
+  superpowers:
+    type: fork
+    repo: https://github.com/12122J/superpowers
+    use_for: [workflow-routing, debugging, implementation, subagents, verification]
+    extraction_rule: Distill principles and failure modes; do not copy full skill text.
+  codegraph:
+    type: fork
+    repo: https://github.com/12122J/codegraph
+    use_for: [exploration, subagents, measurement]
+    extraction_rule: Distill graph-first lookup policy, benchmark fields, and anti-patterns.
+  official-skills-docs:
+    type: docs
+    use_for: [workflow-routing, compression]
+    extraction_rule: Use for progressive disclosure, packaging, and trigger design.
+  local-traces:
+    type: eval-output
+    use_for: [all]
+    extraction_rule: Prefer traces over opinions when they contradict.
+  public-skill-packs:
+    type: repo-analysis
+    use_for: [workflow-routing, verification, compression]
+    extraction_rule: Extract reusable patterns only after checking activation cost.
+

@@ -1,0 +1,11 @@
+id: targeted-before-broad
+category: verification
+source: superpowers
+problem: Running broad suites first can be slow and obscure the specific regression.
+rule: Run the narrowest relevant check first, then widen based on risk.
+when: [post_edit_verification]
+avoid: [full_suite_first_for_tiny_change]
+metrics: [commands_run, duration_ms, success]
+confidence: high
+loads_into: [references/verification.md]
+

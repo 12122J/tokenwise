@@ -1,0 +1,28 @@
+version: 1
+categories:
+  exploration:
+    purpose: Choose the cheapest reliable source of code context.
+    metrics: [file_reads, grep_calls, codegraph_calls, total_tokens]
+  workflow-routing:
+    purpose: Load the smallest workflow that prevents the likely failure mode.
+    metrics: [skills_loaded, skill_words_loaded, task_success]
+  debugging:
+    purpose: Find root cause before changing code.
+    metrics: [fix_attempts, diagnostics_added, tests_run, success]
+  implementation:
+    purpose: Preserve TDD discipline without loading a full process tree.
+    metrics: [test_first, changed_files, verification_cost, success]
+  subagents:
+    purpose: Use delegation only when it reduces duplicated context.
+    metrics: [subagent_count, duplicate_reads, total_tokens, success]
+  verification:
+    purpose: Match verification breadth to changed surface and risk.
+    metrics: [commands_run, duration_ms, failures_caught, success]
+  compression:
+    purpose: Convert explored context into compact reusable state.
+    metrics: [summary_words, repeated_reads, total_tokens]
+confidence:
+  high: Repeated source or trace evidence.
+  medium: Strong source guidance, limited local traces.
+  low: Hypothesis pending eval.
+
