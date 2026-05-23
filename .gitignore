@@ -3,6 +3,10 @@ results/*.json
 results/*.jsonl
 results/*.csv
 results/*.md
+results/**/*.log
+results/**/*.md
+results/logs/
+results/prompts/
+results/smoke-logs/
 !results/.gitkeep
 .DS_Store
-

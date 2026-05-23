@@ -65,6 +65,16 @@ No token-savings claim should be made until repeatable eval results exist.
 npm run check
 ```
 
+## Eval Smoke Test
+
+```bash
+npm run eval:smoke -- --clean
+node scripts/summarize-results.mjs results/smoke-runs.jsonl
+```
+
+Smoke results are synthetic and prove the pipeline only. Use
+`scripts/run-eval.mjs` with a real agent command before making savings claims.
+
 ## Install Sketch
 
 For Claude Code, copy `skills/tokenwise/` into `.claude/skills/tokenwise/`.

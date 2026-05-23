@@ -45,6 +45,8 @@ Exit criteria:
 
 Goal: compare workflows on repeatable tasks.
 
+Status: paired-run harness scaffolded with synthetic smoke runner.
+
 Variants:
 
 - control

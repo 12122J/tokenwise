@@ -7,8 +7,11 @@
   "scripts": {
     "cards": "node scripts/collect-cards.mjs",
     "count:skills": "node scripts/count-skill-words.mjs skills adapters",
+    "eval:run": "node scripts/run-eval.mjs",
+    "eval:smoke": "node scripts/run-eval.mjs --tasks bugfix-known-failure --variants superpowers,tokenwise-codegraph --command \"node scripts/mock-agent.mjs\" --out results/smoke-runs.jsonl --logs-dir results/smoke-logs",
     "summarize": "node scripts/summarize-results.mjs results/runs.jsonl",
-    "check": "npm run cards && npm run count:skills"
+    "test": "node --test",
+    "check": "npm run cards && npm run count:skills && npm test"
   },
   "keywords": [
     "agent-skills",
@@ -20,4 +23,3 @@
   ],
   "license": "MIT"
 }
-
