@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {
   buildPrompt,
   buildRunPlan,
@@ -111,6 +112,23 @@ test('extractCodexMetrics parses turn usage and tool events', () => {
     grep_calls: 0,
     codegraph_calls: 1
   });
+});
+
+test('tokenwise variant prompt includes the runtime router', () => {
+  const variantText = readFileSync(
+    new URL('../evals/variants/tokenwise.md', import.meta.url),
+    'utf8'
+  );
+  const prompt = buildPrompt({
+    taskId: 'test-task',
+    taskText: 'id: test-task\nprompt: "Test"',
+    variant: 'tokenwise',
+    variantText,
+    rubrics: []
+  });
+  assert.match(prompt, /Runtime Router/);
+  assert.match(prompt, /Classify the task/);
+  assert.match(prompt, /Pick a budget/);
 });
 
 test('normalizeResult fills required run metadata and computed total tokens', () => {
