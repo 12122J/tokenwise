@@ -52,3 +52,10 @@ Do not claim Tokenwise saves tokens until:
 Initial target: `tokenwise-codegraph` saves 30% median total tokens versus
 `superpowers` with no task-success regression.
 
+**Note on the first real pilot:** The pilot runs (see `docs/REAL_EVAL_STATUS.md`)
+used the tokenwise variant without proper skill injection — the SKILL.md router
+was not in scope for any tokenwise run. The comparison measured full Superpowers
+plugin vs lightweight behavioral guidelines, not Tokenwise-skill vs Superpowers.
+The `evals/variants/tokenwise.md` file now embeds the full skill so future runs
+are valid. Rerun the pilot before drawing conclusions from the existing results.
+
