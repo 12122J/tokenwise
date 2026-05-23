@@ -14,7 +14,7 @@ node scripts/run-eval.mjs \
   --clean \
   --tasks tokenwise-router-orientation,tokenwise-runner-measurement,tokenwise-review-runner \
   --variants superpowers,tokenwise \
-  --command "codex -a never exec --json --ephemeral --skip-git-repo-check --sandbox read-only --cd /Users/javi/Documents/tokenwise - < {prompt_file}" \
+  --command "codex -a never exec --json --ephemeral --skip-git-repo-check --sandbox read-only --cd /path/to/tokenwise - < {prompt_file}" \
   --out results/real-pilot-runs.jsonl \
   --logs-dir results/real-pilot-logs \
   --prompts-dir results/real-pilot-prompts
@@ -52,6 +52,36 @@ This is not enough for a public claim yet:
 
 Current internal read: promising, but not proven. The next valid claim gate is
 at least 5 task types with repeatable paired runs and no success regression.
+
+## What the Comparison Actually Measured
+
+The six runs did not compare Tokenwise-skill vs Superpowers-skill.
+
+The superpowers variant had the full Superpowers plugin auto-loaded from a
+global Codex install — hence `skill_words_loaded: 1,455` on every run.
+
+The tokenwise variant had no skill injected. The prompt contained only the
+six-bullet behavioral description from `evals/variants/tokenwise.md`.
+The Tokenwise SKILL.md was not in scope for any run.
+
+Evidence: the `tokenwise-runner-measurement` tokenwise run shows
+`skill_words_loaded: 0` and `tool_calls: 14` (vs superpowers' 7). An active
+router would have classified the task and stopped earlier. The
+`skill_words_loaded: 454` on the orientation run is the agent reading SKILL.md
+to answer "explain how the router works" — not the skill being active.
+
+**Actual comparison:** full Superpowers plugin (~1,455 words always loaded)
+vs six-bullet behavioral guidelines (0 extra words).
+
+**What the data still shows:** reducing forced skill scaffolding saves tokens.
+That is a real directional signal. It does not validate Tokenwise routing
+behavior. Valid paired measurements require rerunning with the variant fix.
+
+## Variant Fix Applied
+
+`evals/variants/tokenwise.md` now embeds the full SKILL.md router. Future runs
+will have the actual routing instructions in scope, making the comparison valid.
+Rerun with `--clean` to produce new results.
 
 ## Measurement Fix
 
