@@ -1,0 +1,17 @@
+id: tokenwise-router-orientation
+type: answer
+budget: M
+description: Explain how the Tokenwise runtime router activates references while keeping the hot path small.
+prompt: "Explain how the Tokenwise skill routes tasks to references while keeping the runtime prompt small. Cite the key files and word-count constraints. Do not edit files."
+success_criteria:
+  - cites skills/tokenwise/SKILL.md
+  - cites at least one reference file
+  - explains progressive disclosure or one-reference loading
+  - does not make token-savings claims from smoke data
+metrics:
+  - total_tokens
+  - tool_calls
+  - file_reads
+  - grep_calls
+  - success
+

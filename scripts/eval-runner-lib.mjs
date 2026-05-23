@@ -71,10 +71,75 @@ export function buildPrompt({ taskId, taskText, variant, variantText, rubrics })
 }
 
 export function extractTokenwiseResult(text) {
+  const jsonMessageResults = [];
+  for (const line of text.split(/\r?\n/)) {
+    try {
+      const event = JSON.parse(line);
+      const messageText = event.item?.text ?? event.message?.text;
+      if (typeof messageText === 'string') {
+        const result = extractTokenwiseResultFromPlainText(messageText);
+        if (result) jsonMessageResults.push(result);
+      }
+    } catch {
+      // Non-JSON log lines are handled by the plain-text fallback below.
+    }
+  }
+  if (jsonMessageResults.length > 0) {
+    return jsonMessageResults[jsonMessageResults.length - 1];
+  }
+
+  return extractTokenwiseResultFromPlainText(text);
+}
+
+function extractTokenwiseResultFromPlainText(text) {
   const matches = [...text.matchAll(/TOKENWISE_RESULT\s+({.*})/g)];
   if (matches.length === 0) return null;
   const last = matches[matches.length - 1][1];
   return JSON.parse(last);
+}
+
+export function extractCodexMetrics(text) {
+  const metrics = {
+    input_tokens: 0,
+    cached_input_tokens: 0,
+    output_tokens: 0,
+    reasoning_output_tokens: 0,
+    total_tokens: 0,
+    tool_calls: 0,
+    file_reads: 0,
+    grep_calls: 0,
+    codegraph_calls: 0
+  };
+
+  for (const line of text.split(/\r?\n/)) {
+    if (!line.trim()) continue;
+    let event;
+    try {
+      event = JSON.parse(line);
+    } catch {
+      continue;
+    }
+
+    const usage = event.usage ?? event.message?.usage;
+    if (usage) {
+      metrics.input_tokens += usage.input_tokens ?? 0;
+      metrics.cached_input_tokens += usage.cached_input_tokens ?? 0;
+      metrics.output_tokens += usage.output_tokens ?? 0;
+      metrics.reasoning_output_tokens += usage.reasoning_output_tokens ?? 0;
+    }
+
+    const name = event.name ?? event.tool_name ?? event.item?.name ?? event.message?.name;
+    const itemType = event.item?.type ?? event.type;
+    if (name && /tool|function/i.test(itemType ?? '')) {
+      metrics.tool_calls += 1;
+      if (/^(Read|read)$/i.test(name)) metrics.file_reads += 1;
+      if (/grep|rg|search/i.test(name) && !/codegraph/i.test(name)) metrics.grep_calls += 1;
+      if (/codegraph/i.test(name)) metrics.codegraph_calls += 1;
+    }
+  }
+
+  metrics.total_tokens = metrics.input_tokens + metrics.output_tokens;
+  return metrics;
 }
 
 export function normalizeResult({ taskId, variant, runId, repetition, durationMs, parsed }) {
@@ -199,9 +264,11 @@ export async function executeRun({ root, run, command, outFile, logsDir, prompts
   ].join('\n');
   writeFileSync(logFile, log);
 
-  const parsed = extractTokenwiseResult(completed.text) ?? {
+  const codexMetrics = extractCodexMetrics(completed.text);
+  const markerResult = extractTokenwiseResult(completed.text);
+  const parsed = markerResult ? { ...markerResult, ...nonZeroMetrics(codexMetrics) } : {
     success: false,
-    total_tokens: 0,
+    ...nonZeroMetrics(codexMetrics),
     notes: `No TOKENWISE_RESULT marker found. Exit code: ${completed.code}`
   };
   const normalized = normalizeResult({
@@ -217,4 +284,10 @@ export async function executeRun({ root, run, command, outFile, logsDir, prompts
   appendFileSync(outFile, `${JSON.stringify(normalized)}\n`);
 
   return { result: normalized, promptFile, logFile };
+}
+
+function nonZeroMetrics(metrics) {
+  return Object.fromEntries(
+    Object.entries(metrics).filter(([, value]) => typeof value === 'number' && value > 0)
+  );
 }

@@ -45,6 +45,15 @@ function pctSavings(baseline, value) {
   return ((baseline - value) / baseline) * 100;
 }
 
+function measuredSuccessfulRuns(taskRuns) {
+  return taskRuns.filter((run) =>
+    run.success === true &&
+    typeof run.total_tokens === 'number' &&
+    Number.isFinite(run.total_tokens) &&
+    run.total_tokens > 0
+  );
+}
+
 const groups = new Map();
 for (const run of runs) {
   const key = `${run.task_id}::${run.variant}`;
@@ -58,21 +67,25 @@ const byTask = {};
 
 for (const taskId of taskIds) {
   byTask[taskId] = {};
-  const superpowersMedian = median((groups.get(`${taskId}::superpowers`) ?? []).map((run) => run.total_tokens));
+  const superpowersMedian = median(
+    measuredSuccessfulRuns(groups.get(`${taskId}::superpowers`) ?? []).map((run) => run.total_tokens)
+  );
   for (const variant of variants) {
     const taskRuns = groups.get(`${taskId}::${variant}`) ?? [];
-    const totalTokens = median(taskRuns.map((run) => run.total_tokens));
+    const measuredRuns = measuredSuccessfulRuns(taskRuns);
+    const totalTokens = median(measuredRuns.map((run) => run.total_tokens));
     byTask[taskId][variant] = {
       runs: taskRuns.length,
       success_rate: taskRuns.length
         ? taskRuns.filter((run) => run.success === true).length / taskRuns.length
         : null,
       median_total_tokens: totalTokens,
-      median_cost_usd: median(taskRuns.map((run) => run.cost_usd)),
-      median_tool_calls: median(taskRuns.map((run) => run.tool_calls)),
-      median_file_reads: median(taskRuns.map((run) => run.file_reads)),
-      median_grep_calls: median(taskRuns.map((run) => run.grep_calls)),
-      median_codegraph_calls: median(taskRuns.map((run) => run.codegraph_calls)),
+      measured_runs: measuredRuns.length,
+      median_cost_usd: median(measuredRuns.map((run) => run.cost_usd)),
+      median_tool_calls: median(measuredRuns.map((run) => run.tool_calls)),
+      median_file_reads: median(measuredRuns.map((run) => run.file_reads)),
+      median_grep_calls: median(measuredRuns.map((run) => run.grep_calls)),
+      median_codegraph_calls: median(measuredRuns.map((run) => run.codegraph_calls)),
       savings_vs_superpowers_pct: pctSavings(superpowersMedian, totalTokens)
     };
   }
@@ -81,15 +94,17 @@ for (const taskId of taskIds) {
 const byVariant = {};
 for (const variant of variants) {
   const variantRuns = runs.filter((run) => run.variant === variant);
+  const measuredRuns = measuredSuccessfulRuns(variantRuns);
   byVariant[variant] = {
     runs: variantRuns.length,
     success_rate: variantRuns.length
       ? variantRuns.filter((run) => run.success === true).length / variantRuns.length
       : null,
-    median_total_tokens: median(variantRuns.map((run) => run.total_tokens)),
-    median_cost_usd: median(variantRuns.map((run) => run.cost_usd)),
-    median_tool_calls: median(variantRuns.map((run) => run.tool_calls)),
-    median_file_reads: median(variantRuns.map((run) => run.file_reads))
+    measured_runs: measuredRuns.length,
+    median_total_tokens: median(measuredRuns.map((run) => run.total_tokens)),
+    median_cost_usd: median(measuredRuns.map((run) => run.cost_usd)),
+    median_tool_calls: median(measuredRuns.map((run) => run.tool_calls)),
+    median_file_reads: median(measuredRuns.map((run) => run.file_reads))
   };
 }
 

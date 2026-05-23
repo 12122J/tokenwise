@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   buildPrompt,
   buildRunPlan,
+  extractCodexMetrics,
   extractTokenwiseResult,
   normalizeResult,
   parseList
@@ -59,6 +60,59 @@ test('extractTokenwiseResult reads the last machine-readable result marker', () 
   });
 });
 
+test('extractTokenwiseResult reads markers from Codex JSON agent messages', () => {
+  const text = [
+    JSON.stringify({ type: 'thread.started' }),
+    JSON.stringify({
+      type: 'item.completed',
+      item: {
+        type: 'agent_message',
+        text: 'TOKENWISE_RESULT {"success":true,"total_tokens":1,"notes":"from json"}'
+      }
+    })
+  ].join('\n');
+
+  assert.deepEqual(extractTokenwiseResult(text), {
+    success: true,
+    total_tokens: 1,
+    notes: 'from json'
+  });
+});
+
+test('extractCodexMetrics parses turn usage and tool events', () => {
+  const text = [
+    JSON.stringify({
+      type: 'turn.completed',
+      usage: {
+        input_tokens: 100,
+        cached_input_tokens: 20,
+        output_tokens: 30,
+        reasoning_output_tokens: 5
+      }
+    }),
+    JSON.stringify({
+      type: 'item.completed',
+      item: { type: 'tool_call', name: 'Read' }
+    }),
+    JSON.stringify({
+      type: 'item.completed',
+      item: { type: 'tool_call', name: 'codegraph_context' }
+    })
+  ].join('\n');
+
+  assert.deepEqual(extractCodexMetrics(text), {
+    input_tokens: 100,
+    cached_input_tokens: 20,
+    output_tokens: 30,
+    reasoning_output_tokens: 5,
+    total_tokens: 130,
+    tool_calls: 2,
+    file_reads: 1,
+    grep_calls: 0,
+    codegraph_calls: 1
+  });
+});
+
 test('normalizeResult fills required run metadata and computed total tokens', () => {
   const result = normalizeResult({
     taskId: 'feature-small-behavior',
@@ -83,4 +137,3 @@ test('normalizeResult fills required run metadata and computed total tokens', ()
   assert.equal(result.success, true);
   assert.equal(result.tool_calls, 3);
 });
-

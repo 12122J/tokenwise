@@ -1,0 +1,18 @@
+id: tokenwise-review-runner
+type: review
+budget: M
+description: Review the eval runner for concrete bugs or measurement risks.
+prompt: "Review the eval runner and measurement scripts for bugs or measurement risks. Lead with concrete findings and file references. Do not edit files."
+success_criteria:
+  - leads with findings or explicitly says no findings
+  - focuses on bugs or measurement validity
+  - cites files
+  - does not treat smoke savings as real savings
+metrics:
+  - total_tokens
+  - tool_calls
+  - file_reads
+  - grep_calls
+  - findings_count
+  - success
+

@@ -1,0 +1,17 @@
+id: tokenwise-runner-measurement
+type: answer
+budget: M
+description: Explain how the eval runner records real usage and summarizes savings.
+prompt: "Explain how the eval runner captures real Codex usage metrics, writes normalized JSONL, and computes savings versus Superpowers. Cite the relevant scripts/docs. Do not edit files."
+success_criteria:
+  - cites scripts/run-eval.mjs
+  - cites scripts/eval-runner-lib.mjs
+  - cites scripts/summarize-results.mjs or docs/MEASUREMENT.md
+  - distinguishes synthetic smoke data from real claims
+metrics:
+  - total_tokens
+  - tool_calls
+  - file_reads
+  - grep_calls
+  - success
+
