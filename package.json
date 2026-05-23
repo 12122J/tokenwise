@@ -1,7 +1,7 @@
 {
   "name": "tokenwise",
   "version": "0.1.0",
-"description": "Token-aware agent workflow skills, knowledge cards, and evals.",
+  "description": "Token-aware agent workflow skills, knowledge cards, and evals.",
   "type": "module",
   "scripts": {
     "build": "node scripts/build-skill.mjs --config framework/config.yaml",
@@ -14,7 +14,9 @@
     "eval:smoke": "node scripts/run-eval.mjs --tasks bugfix-known-failure --variants superpowers,tokenwise-codegraph --command \"node scripts/mock-agent.mjs\" --out results/smoke-runs.jsonl --logs-dir results/smoke-logs",
     "summarize": "node scripts/summarize-results.mjs results/runs.jsonl",
     "test": "node --test",
-    "check": "npm run cards && npm run count:skills && npm test"
+    "check": "npm run cards && npm run count:skills && npm test",
+    "server": "node server/index.mjs",
+    "server:dev": "node --watch server/index.mjs"
   },
   "keywords": [
     "agent-skills",
@@ -24,5 +26,8 @@
     "codex",
     "claude-code"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }
