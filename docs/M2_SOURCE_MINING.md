@@ -22,7 +22,7 @@ then keeps the runtime skill small through progressive disclosure.
 
 ## Current Knowledge Base
 
-- 83 cards total
+- 91 cards total
 - 8 categories
 - Runtime skill body remains under 300 words
 - Full skill/adapters active surface remains under 1,700 words

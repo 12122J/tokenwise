@@ -1,8 +1,7 @@
 {
   "name": "tokenwise",
   "version": "0.1.0",
-  "private": true,
-  "description": "Token-aware agent workflow skills, knowledge cards, and evals.",
+"description": "Token-aware agent workflow skills, knowledge cards, and evals.",
   "type": "module",
   "scripts": {
     "cards": "node scripts/collect-cards.mjs",
