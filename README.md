@@ -1,76 +1,45 @@
 # Tokenwise
 
-An editable workflow framework for AI coding agents. Define your team's engineering process as compact reference cards. Every agent on the team loads only what the current task needs — automatically.
+A self-hosted server that gives your engineering team a shared AI workflow. Every agent follows the same process. You control it from a dashboard.
 
-## The Problem
+## The problem
 
-Most agent workflow tools load everything all the time. A debugging skill, a review skill, an implementation skill — all injected at session start whether the task needs them or not. That's ~1,500 words of context on every task, most of it irrelevant.
+When you have 10 engineers using Claude Code, you have 10 different workflows. One follows TDD. One doesn't. One loads every tool available. One runs completely raw. No standard.
 
-There's also no consistency. One engineer's agent follows TDD. Another's doesn't. A third has no workflow at all. The same team, three different behaviors.
+It's also hard to update. If you want every agent to check git log before searching — good luck propagating that to everyone.
 
-## How It Works
+Tokenwise fixes both. One server, one place to manage the workflow, every agent on the team picks it up automatically.
+
+## How it works
 
 ```mermaid
 flowchart LR
-    A([employee opens\nClaude Code]) --> B[hook fires\nfetches skill from server]
-    B --> C[router classifies task\nand picks a budget]
-    C -->|debug| D[loads debugging.md]
-    C -->|review| E[loads code-review.md]
-    C -->|implement| F[loads implementation.md]
-    C -->|answer| G[loads nothing]
+    A([employee opens\nClaude Code]) --> B[hook fires\nfetches router from server]
+    B --> C[router classifies\nthe task]
+    C -->|debug| D[fetches debugging card]
+    C -->|implement| E[fetches implementation card]
+    C -->|answer| F[nothing loaded]
     style B fill:#1c2128,stroke:#6e40c9,color:#e6edf3
     style C fill:#1c2128,stroke:#6e40c9,color:#e6edf3
 ```
 
-**For the employee:** they drop one config file in `~/.claude-personal/`. After that, every time they open Claude Code, the team's workflow is loaded automatically. They never think about it again.
+**For the engineer:** IT drops one config file on their machine. That's it. Every session after that, their agent loads the team's workflow automatically. They don't know it's happening.
 
-**For the admin:** edit reference cards from a dashboard. Every update is live on the next session — no reinstall, no IT ticket, no action from anyone.
+**For the admin:** edit a card in the dashboard, hit save. Every agent on the team picks it up next session. No reinstall. No IT ticket. No action from anyone.
 
-## Deployment
+## Reference cards
 
-```
-Admin dashboard  →  edit cards, review agent findings
-      ↓
-Tokenwise server  →  serves the current skill via API
-      ↓
-settings.json     →  one file IT drops on employee machines
-      ↓
-Claude Code       →  loads the skill automatically at session start
-```
+The framework has two layers:
 
-IT deploys `settings.json` once via MDM (Jamf, Intune, etc) — the same tool companies use to push VPN or antivirus configs. The file tells Claude Code to fetch the team's skill from the company server on startup. From that point on, every agent session uses the current framework. Admin pushes a card update → all employees pick it up next session.
+**The router** (~270 words, always loaded) — injected at session start. Tells Claude to classify the task, pick a budget, and load one reference card if the task needs it.
 
-## The Framework
+**Reference cards** (~200 words each, loaded on demand) — the router fetches them from the server only when relevant. A debug task loads `debugging.md`. A code review loads `code-review.md`. A quick answer loads nothing.
 
-Companies customize the framework to reflect their actual process:
+Cards live on your server. You edit them in the dashboard. The curl command to fetch each card is baked into the injected router with the team's API key — so no files need to be on the engineer's machine.
 
-```
-framework/
-├── config.yaml          ← define your task types and budgets
-└── references/
-    ├── debugging.md     ← your debug process, your tools, your log locations
-    ├── code-review.md   ← your review checklist and standards
-    ├── implementation.md ← your coding conventions
-    └── onboarding.md    ← how to orient in your codebase
-```
+## Agent findings
 
-Each reference card is 100–200 words. The router loads at most one per task. Generic advice stays off the context window — only the relevant card loads, only when it's needed.
-
-Reference cards ship with solid defaults. They work immediately. Teams improve them over time by merging agent-discovered patterns.
-
-### Build and deploy
-
-```bash
-# Build the skill from your config and reference cards
-node scripts/build-skill.mjs --config framework/config.yaml
-
-# Watch mode — rebuilds automatically when you edit a card
-npm run build:watch
-```
-
-### Agent findings
-
-When an agent discovers a useful pattern, it can submit a finding:
+Agents can surface patterns they discover during tasks:
 
 ```bash
 node scripts/contribute-finding.mjs \
@@ -79,57 +48,60 @@ node scripts/contribute-finding.mjs \
   --task "auth token expiry bug"
 ```
 
-Findings land in `framework/findings/` for admin review. Merge the ones worth keeping — they're added to the relevant card and pushed to all agents on next session.
+Findings show up in the dashboard for the admin to review. Merge the useful ones — they get added to the relevant card and served to all agents on next session.
 
-```bash
-npm run findings           # list pending
-npm run findings:merge <file>  # merge one into its card
-npm run build              # rebuild and push
+## What ships
+
+```
+server/
+├── Admin dashboard     ← edit cards, review findings, manage API keys
+├── Agent API           ← serves the router + cards to Claude Code on demand
+└── Setup flow          ← generates settings.json and install.sh for your team
+
+framework/
+└── references/
+    ├── debugging.md
+    ├── implementation.md
+    ├── code-review.md
+    ├── exploration.md
+    └── onboarding.md
 ```
 
-## Admin Dashboard
+Five reference cards ship with solid defaults. They work immediately out of the box. Teams improve them over time.
 
-An admin dashboard for managing findings, editing reference cards, and generating API keys is in development. For now, manage the framework directly via the CLI tools above.
-
-## Install (Claude Code)
+## Get started
 
 ```bash
-# 1. Copy the skill to your Claude skills directory
-cp -r skills/tokenwise ~/.claude/skills/tokenwise
-
-# 2. Or build a custom skill from the framework template
-node scripts/build-skill.mjs --config framework/config.yaml
-cp -r skills/my-team ~/.claude/skills/my-team
+npm install
+npm run server
 ```
 
-For teams, copy `adapters/claude/CLAUDE.md` to the project root and point the hook at your Tokenwise server.
+Visit `http://localhost:3000` to complete setup. For production, deploy to any Node.js host behind HTTPS.
 
-## Other Platforms
+## Deploy to your team
 
-| Platform | Install |
-|---|---|
-| Codex | Copy `adapters/codex/AGENTS.md` into the agent instructions surface |
-| Cursor | Copy `adapters/cursor/tokenwise.mdc` into `.cursor/rules/` |
-| opencode | Copy `adapters/opencode/AGENTS.md` into the project root |
+From the Setup page in the dashboard:
 
-## Measurement Status
+1. Generate an API key
+2. Download `settings.json` (drop into `~/.claude-personal/`) or `install.sh` (employee runs it once)
+3. IT can push `settings.json` via MDM (Jamf, Intune) to all machines automatically — same way companies push antivirus configs
 
-No valid token-savings claim exists yet.
+From that point on every engineer's Claude Code session loads the framework. You update a card, they get it next session.
 
-The first pilot (6 Codex runs) used a broken variant — the Tokenwise SKILL.md was not injected, so the tokenwise agent ran with a 6-bullet description instead of the actual router. Those results have been retracted. See [docs/REAL_EVAL_STATUS.md](docs/REAL_EVAL_STATUS.md) for the full post-mortem.
+## Other platforms
 
-The variant is now fixed. The first valid paired run (Claude Code, orientation task) confirmed the router is active — it classified the task, loaded exactly one reference, and stopped. A broader comparison across task types is pending.
+Codex, Cursor, and opencode don't support hook injection. From the Setup page you can download a static adapter file (AGENTS.md or .mdc) with the current framework embedded. Re-download when you update cards.
 
-## Local Checks
+## Token savings
+
+Not the point right now and there's no solid data behind it yet.
+
+The original premise was that loading one ~200-word card beats loading multiple heavy workflow skills every session. That's probably true. But measuring it properly takes more runs across more task types than we've done.
+
+Open to discussing this — if you're running evals on agent workflows and want to compare notes, reach out.
+
+## Local checks
 
 ```bash
 npm run check
 ```
-
-## Current State
-
-- 91 evidence cards across 8 categories
-- Runtime skill: under 300 words
-- Framework template with 5 default reference cards
-- Agent findings workflow (contribute, review, merge)
-- Admin dashboard: in development
