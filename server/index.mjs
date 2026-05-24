@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(join(__dirname, 'public')));
+app.use(express.static(join(__dirname, 'public'), { index: false }));
 
 // ── Seed data on first run ─────────────────────────────────────────────────────
 function seedIfNeeded() {

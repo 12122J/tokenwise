@@ -183,3 +183,17 @@ test('POST /api/findings returns 400 if card or finding missing', async () => {
   });
   assert.equal(res.status, 400);
 });
+
+test('server seeds config from framework/ on first run', async () => {
+  db.setConfig({
+    name: 'smoke-test',
+    task_types: [{ id: 'debug', reference: 'debugging' }],
+    budgets: { S: 'small', M: 'medium' },
+  });
+  db.setCard('debugging', '# Debug\n\nContent.');
+  const config = db.getConfig();
+  const skill = buildSkill(config);
+  assert.match(skill, /smoke-test/);
+  assert.match(skill, /debug/);
+  assert.ok(skill.length > 100);
+});
