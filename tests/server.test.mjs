@@ -83,6 +83,42 @@ test('setSettings and getSettings round-trip', () => {
 
 const { buildSkill } = await import('../server/lib/builder.mjs');
 
+import express from 'express';
+import { createServer } from 'node:http';
+
+const { agentAuth } = await import('../server/middleware/agentAuth.mjs');
+const { agentRouter } = await import('../server/routes/agent.mjs');
+
+async function makeTestApp() {
+  const app = express();
+  app.use(express.json());
+  app.use('/api', agentAuth, agentRouter);
+  return app;
+}
+
+async function request(app, method, path, opts = {}) {
+  return new Promise((resolve) => {
+    const server = createServer(app);
+    server.listen(0, () => {
+      const port = server.address().port;
+      const url = `http://localhost:${port}${path}`;
+      const headers = { 'Content-Type': 'application/json', ...opts.headers };
+      import('node:http').then(({ request: req }) => {
+        const r = req(url, { method, headers }, (res) => {
+          let body = '';
+          res.on('data', d => body += d);
+          res.on('end', () => {
+            server.close();
+            resolve({ status: res.statusCode, body: body ? JSON.parse(body) : null });
+          });
+        });
+        if (opts.body) r.write(JSON.stringify(opts.body));
+        r.end();
+      });
+    });
+  });
+}
+
 test('buildSkill generates SKILL.md with task type reference list', () => {
   const config = {
     name: 'acme',
@@ -108,4 +144,42 @@ test('buildSkill word count is under 400', () => {
   const skill = buildSkill(config);
   const words = skill.split(/\s+/).filter(Boolean).length;
   assert.ok(words < 400, `skill is ${words} words, expected < 400`);
+});
+
+test('GET /api/skill returns 401 without API key', async () => {
+  const app = await makeTestApp();
+  const res = await request(app, 'GET', '/api/skill');
+  assert.equal(res.status, 401);
+});
+
+test('GET /api/skill returns hook JSON with valid API key', async () => {
+  const { key } = db.addKey('test');
+  const app = await makeTestApp();
+  db.setConfig({ name: 'test', task_types: [{ id: 'debug', reference: 'debugging' }], budgets: { S: 'small' } });
+  db.setCard('debugging', '# Debug\n\nContent.');
+  const res = await request(app, 'GET', '/api/skill', { headers: { 'X-API-Key': key } });
+  assert.equal(res.status, 200);
+  assert.ok(res.body.hookSpecificOutput);
+  assert.ok(res.body.hookSpecificOutput.additionalContext.includes('Runtime Router'));
+});
+
+test('POST /api/findings saves finding with valid key', async () => {
+  const { key } = db.addKey('findings-test');
+  const app = await makeTestApp();
+  const res = await request(app, 'POST', '/api/findings', {
+    headers: { 'X-API-Key': key },
+    body: { card: 'debugging', finding: 'Check git log first', task: 'auth bug' },
+  });
+  assert.equal(res.status, 201);
+  assert.ok(res.body.id);
+});
+
+test('POST /api/findings returns 400 if card or finding missing', async () => {
+  const { key } = db.addKey('bad-findings-test');
+  const app = await makeTestApp();
+  const res = await request(app, 'POST', '/api/findings', {
+    headers: { 'X-API-Key': key },
+    body: { card: 'debugging' },
+  });
+  assert.equal(res.status, 400);
 });
