@@ -11,6 +11,14 @@ async function api(method, path, body) {
   return res.json();
 }
 
+function downloadFile(filename, content) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], { type: 'text/plain' }));
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
 function timeAgo(iso) {
   const s = Math.floor((Date.now() - new Date(iso)) / 1000);
   if (s < 60) return 'just now';
@@ -235,9 +243,14 @@ async function keys(newKey) {
         </div>
       `).join('')}
       <div style="margin-top:1.5rem">
-        <div class="section-title">Employee settings.json</div>
-        <div class="section-desc" style="margin-bottom:0.75rem">${newKey ? 'Ready to copy — key is already filled in.' : 'Replace YOUR_API_KEY with a key from above.'}</div>
-        <div class="snippet">${newKey ? snippet.snippet.replace('YOUR_API_KEY', newKey) : snippet.snippet}</div>
+        <div class="section-title" style="margin-bottom:0.4rem">Deploy to employees</div>
+        <div class="section-desc" style="margin-bottom:0.75rem">${newKey ? 'API key is pre-filled — ready to copy or download.' : 'Generate a key above to get files with the key pre-filled.'}</div>
+        <div class="snippet" style="margin-bottom:0.75rem">${newKey ? snippet.snippet.replace('YOUR_API_KEY', newKey) : snippet.snippet}</div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.25rem">
+          <button class="btn btn-ghost" id="dl-settings">Download settings.json</button>
+          <button class="btn btn-ghost" id="dl-script">Download install.sh</button>
+        </div>
+        <div class="section-desc" style="font-size:11px">For Codex, Cursor, or opencode — see the README for adapter files. Those platforms embed the skill statically and don't use hook injection.</div>
       </div>
     </div>
   `;
@@ -254,6 +267,33 @@ async function keys(newKey) {
         keys();
       }
     });
+  });
+
+  const settingsJson = JSON.parse(newKey ? snippet.snippet.replace('YOUR_API_KEY', newKey) : snippet.snippet);
+  const command = settingsJson.hooks.SessionStart[0].hooks[0].command;
+
+  $('dl-settings').addEventListener('click', () => {
+    downloadFile('settings.json', JSON.stringify(settingsJson, null, 2));
+  });
+
+  $('dl-script').addEventListener('click', () => {
+    const script = `#!/bin/bash
+set -e
+SETTINGS_DIR="$HOME/.claude-personal"
+mkdir -p "$SETTINGS_DIR"
+
+if [ -f "$SETTINGS_DIR/settings.json" ]; then
+  cp "$SETTINGS_DIR/settings.json" "$SETTINGS_DIR/settings.json.bak"
+  echo "Backed up existing settings.json to settings.json.bak"
+fi
+
+cat > "$SETTINGS_DIR/settings.json" << '__ENDJSON__'
+${JSON.stringify(settingsJson, null, 2)}
+__ENDJSON__
+
+echo "Tokenwise hook installed. Restart Claude Code to activate."
+`;
+    downloadFile('install-tokenwise.sh', script);
   });
 }
 

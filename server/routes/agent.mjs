@@ -7,11 +7,13 @@ export const agentRouter = Router();
 agentRouter.get('/skill', (req, res) => {
   const config = db.getConfig();
   if (!config) return res.status(503).json({ error: 'Server not configured yet' });
+  const cards = db.getCards();
   const skillText = buildSkill(config);
+  const welcome = `[${config.name} framework loaded — ${config.task_types.length} task types, ${Object.keys(cards).length} cards]\n\n`;
   res.json({
     hookSpecificOutput: {
       hookEventName: 'SessionStart',
-      additionalContext: skillText,
+      additionalContext: welcome + skillText,
     },
   });
 });
