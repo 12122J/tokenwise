@@ -50,6 +50,43 @@ node scripts/contribute-finding.mjs \
 
 Findings show up in the dashboard for the admin to review. Merge the useful ones — they get added to the relevant card and served to all agents on next session.
 
+## Dashboard
+
+```
+ tokenwise · admin
+──────────────────────────────────────────────────────────────────────
+
+  CONTENT         │  Findings
+  Findings   [2]  │  2 findings need your review
+  Cards           │  Agents surfaced these during recent tasks.
+  Config          │  Merge the useful ones — they update the card.
+                  │
+  DEPLOY          │  ┌────────────────────────────────────────────┐
+  API Keys        │  │ debugging       just now · auth token bug  │
+  Setup           │  │ Check git log before any search —          │
+                  │  │ regressions are almost always recent       │
+                  │  │ → adds to debugging.md   [Merge]  [Skip]  │
+                  │  └────────────────────────────────────────────┘
+
+──────────────────────────────────────────────────────────────────────
+
+  CONTENT         │  Setup · Deploy to your team
+  Findings        │
+  Cards           │  1  Your server is running
+  Config          │     https://acme.example.com · 6 task types
+                  │
+  DEPLOY          │  2  Generate an API key
+  API Keys        │     [ engineering-team_________ ]  [Generate]
+  Setup      ←    │
+                  │  3  Claude Code — hook injection
+                  │     [↓ settings.json]  [↓ install.sh]
+                  │
+                  │  4  Other platforms
+                  │     [↓ AGENTS.md]   [↓ .mdc rule]
+
+──────────────────────────────────────────────────────────────────────
+```
+
 ## What ships
 
 ```
