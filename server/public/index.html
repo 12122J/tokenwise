@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tokenwise Admin</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <span class="brand">Tokenwise</span>
+    <span class="divider">|</span>
+    <span class="role">Admin</span>
+    <span class="info" id="topbar-info"></span>
+  </div>
+  <div class="body">
+    <nav class="sidebar">
+      <div class="sidebar-group">
+        <div class="sidebar-label">Manage</div>
+        <div class="sidebar-item active" data-view="findings">
+          Findings <span class="badge" id="findings-badge" style="display:none"></span>
+        </div>
+        <div class="sidebar-item" data-view="cards">Cards</div>
+        <div class="sidebar-item" data-view="config">Config</div>
+      </div>
+      <div class="sidebar-group">
+        <div class="sidebar-label">System</div>
+        <div class="sidebar-item" data-view="keys">API Keys</div>
+        <div class="sidebar-item" data-view="setup">Setup</div>
+      </div>
+    </nav>
+    <main class="main" id="main"></main>
+  </div>
+</div>
+<script src="/app.js"></script>
+</body>
+</html>
