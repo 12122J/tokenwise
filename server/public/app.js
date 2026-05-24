@@ -270,21 +270,26 @@ async function keys(newKey) {
   });
 
   const settingsJson = JSON.parse(newKey ? snippet.snippet.replace('YOUR_API_KEY', newKey) : snippet.snippet);
-  const command = settingsJson.hooks.SessionStart[0].hooks[0].command;
 
   $('dl-settings').addEventListener('click', () => {
     downloadFile('settings.json', JSON.stringify(settingsJson, null, 2));
   });
 
   $('dl-script').addEventListener('click', () => {
-    const script = `#!/bin/bash
+    downloadFile('install-tokenwise.sh', buildInstallScript(settingsJson));
+  });
+}
+
+// ── Adapter file builders ──────────────────────────────────────────────────────
+function buildInstallScript(settingsJson) {
+  return `#!/bin/bash
 set -e
 SETTINGS_DIR="$HOME/.claude-personal"
 mkdir -p "$SETTINGS_DIR"
 
 if [ -f "$SETTINGS_DIR/settings.json" ]; then
   cp "$SETTINGS_DIR/settings.json" "$SETTINGS_DIR/settings.json.bak"
-  echo "Backed up existing settings.json to settings.json.bak"
+  echo "Backed up existing settings.json"
 fi
 
 cat > "$SETTINGS_DIR/settings.json" << '__ENDJSON__'
@@ -293,30 +298,121 @@ __ENDJSON__
 
 echo "Tokenwise hook installed. Restart Claude Code to activate."
 `;
-    downloadFile('install-tokenwise.sh', script);
-  });
+}
+
+function buildCodexAdapter(skillText, name) {
+  return `# ${name} Framework\n\n${skillText}\n`;
+}
+
+function buildCursorAdapter(skillText, name) {
+  return `---\ndescription: ${name} workflow framework\nalwaysApply: false\n---\n\n${skillText}\n`;
 }
 
 // ── Setup ──────────────────────────────────────────────────────────────────────
-async function setup() {
-  const snippet = await api('GET', '/snippet');
+async function setup(generatedKey) {
+  const [cfg, snippet] = await Promise.all([api('GET', '/config'), api('GET', '/snippet')]);
+  const serverUrl = window.location.origin;
+  const filledSnippet = JSON.parse(generatedKey ? snippet.snippet.replace('YOUR_API_KEY', generatedKey) : snippet.snippet);
+
   main().innerHTML = `
     <div class="page-header">
       <span class="page-title">Setup</span>
-      <span class="page-subtitle">How to deploy the framework to your team</span>
+      <span class="page-subtitle">Deploy the ${cfg.name} framework to your team</span>
     </div>
-    <div class="content-area">
-      <div class="section-title" style="margin-bottom:0.5rem">Step 1 — Generate an API key</div>
-      <div class="section-desc">Go to API Keys, generate a key labelled for your team.</div>
+    <div class="deploy-steps">
 
-      <div class="section-title" style="margin-bottom:0.5rem;margin-top:1.25rem">Step 2 — Give employees this file</div>
-      <div class="section-desc">Save as <code>~/.claude-personal/settings.json</code> on each employee machine. Replace YOUR_API_KEY. IT can deploy this via MDM (Jamf, Intune) to all machines at once.</div>
-      <div class="snippet">${snippet.snippet}</div>
+      <div class="deploy-step">
+        <div class="deploy-step-num">1</div>
+        <div class="deploy-step-body">
+          <div class="section-title">Your server is running</div>
+          <div class="section-desc" style="margin-bottom:0">${serverUrl} &nbsp;·&nbsp; ${cfg.name} &nbsp;·&nbsp; ${cfg.task_types.length} task types</div>
+        </div>
+      </div>
 
-      <div class="section-title" style="margin-bottom:0.5rem;margin-top:1.25rem">Step 3 — Done</div>
-      <div class="section-desc">Every time an employee opens Claude Code, the hook fetches the current skill from this server and injects it into their session. Update a card in the dashboard — all agents get it next session automatically.</div>
+      <div class="deploy-step">
+        <div class="deploy-step-num">2</div>
+        <div class="deploy-step-body">
+          <div class="section-title">Generate an API key</div>
+          <div class="section-desc">Each team or deployment gets its own key. Revoke it any time from API Keys.</div>
+          ${generatedKey
+            ? `<div class="key-reveal">Key generated (shown once):\n\n${generatedKey}</div>`
+            : `<div class="key-new-form">
+                <input type="text" id="setup-key-label" placeholder="Label (e.g. engineering-team)">
+                <button class="btn btn-primary" id="setup-gen-key">Generate key</button>
+               </div>`
+          }
+        </div>
+      </div>
+
+      <div class="deploy-step">
+        <div class="deploy-step-num">3</div>
+        <div class="deploy-step-body">
+          <div class="section-title">Claude Code — hook injection</div>
+          <div class="section-desc">The hook fetches the current framework on every session start. Updates you make in the dashboard take effect automatically — no reinstall needed.</div>
+          <div class="snippet" style="margin-bottom:0.75rem">${generatedKey ? snippet.snippet.replace('YOUR_API_KEY', generatedKey) : snippet.snippet}</div>
+          <div class="platform-row">
+            <button class="btn btn-primary" id="dl-cc-settings">Download settings.json</button>
+            <button class="btn btn-ghost" id="dl-cc-script">Download install.sh</button>
+          </div>
+          <div class="section-desc" style="font-size:11px;margin-bottom:0">
+            <strong style="color:var(--text)">settings.json</strong> — drop into <code>~/.claude-personal/</code> on the employee's machine.<br>
+            <strong style="color:var(--text)">install.sh</strong> — employee runs it once; installs the file automatically and backs up any existing one.
+          </div>
+        </div>
+      </div>
+
+      <div class="deploy-step">
+        <div class="deploy-step-num">4</div>
+        <div class="deploy-step-body">
+          <div class="section-title">Other platforms — static embed</div>
+          <div class="section-desc">These platforms don't support hook injection. The current framework is embedded directly in the file. Re-download after updating cards.</div>
+          <div class="platform-row">
+            <button class="btn btn-ghost" id="dl-codex">Codex — AGENTS.md</button>
+            <button class="btn btn-ghost" id="dl-opencode">opencode — AGENTS.md</button>
+            <button class="btn btn-ghost" id="dl-cursor">Cursor — .mdc rule</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="deploy-step">
+        <div class="deploy-step-num">5</div>
+        <div class="deploy-step-body">
+          <div class="section-title">Distribute to employees</div>
+          <div class="section-desc" style="margin-bottom:0">
+            <strong style="color:var(--text)">Share install.sh</strong> — employee runs it once, done.<br><br>
+            <strong style="color:var(--text)">MDM deployment</strong> — IT pushes <code>settings.json</code> to all machines via Jamf, Intune, or any MDM tool. Same mechanism companies use to deploy antivirus configs. Every machine gets it automatically, no employee action needed.
+          </div>
+        </div>
+      </div>
+
     </div>
   `;
+
+  if ($('setup-gen-key')) {
+    $('setup-gen-key').addEventListener('click', async () => {
+      const label = $('setup-key-label').value.trim();
+      if (!label) return;
+      const res = await api('POST', '/keys', { label });
+      setup(res.key);
+    });
+  }
+
+  $('dl-cc-settings').addEventListener('click', () => {
+    downloadFile('settings.json', JSON.stringify(filledSnippet, null, 2));
+  });
+
+  $('dl-cc-script').addEventListener('click', () => {
+    downloadFile('install-tokenwise.sh', buildInstallScript(filledSnippet));
+  });
+
+  async function downloadAdapter(filename, builder) {
+    const { text, name } = await api('GET', '/skill-text');
+    downloadFile(filename, builder(text, name));
+  }
+
+  $('dl-codex').addEventListener('click', () => downloadAdapter('AGENTS.md', buildCodexAdapter));
+  $('dl-opencode').addEventListener('click', () => downloadAdapter('AGENTS.md', buildCodexAdapter));
+  $('dl-cursor').addEventListener('click', () => downloadAdapter('tokenwise.mdc', buildCursorAdapter));
 }
 
 // ── Init ───────────────────────────────────────────────────────────────────────

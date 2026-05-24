@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { db } from '../db.mjs';
+import { buildSkill } from '../lib/builder.mjs';
 
 export const adminApiRouter = Router();
 
@@ -91,6 +92,14 @@ adminApiRouter.post('/keys', (req, res) => {
 adminApiRouter.delete('/keys/:id', (req, res) => {
   db.deleteKey(req.params.id);
   res.json({ ok: true });
+});
+
+// ── Skill text (for static adapter downloads) ─────────────────────────────────
+
+adminApiRouter.get('/skill-text', (req, res) => {
+  const config = db.getConfig();
+  if (!config) return res.status(503).json({ error: 'Server not configured yet' });
+  res.json({ text: buildSkill(config), name: config.name });
 });
 
 // ── Setup snippet ──────────────────────────────────────────────────────────────
