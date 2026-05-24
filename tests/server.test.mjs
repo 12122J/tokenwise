@@ -80,3 +80,32 @@ test('setSettings and getSettings round-trip', () => {
   db.setSettings({ password_hash: 'abc', setup_complete: false });
   assert.equal(db.getSettings().password_hash, 'abc');
 });
+
+const { buildSkill } = await import('../server/lib/builder.mjs');
+
+test('buildSkill generates SKILL.md with task type reference list', () => {
+  const config = {
+    name: 'acme',
+    task_types: [
+      { id: 'debug', reference: 'debugging' },
+      { id: 'review', reference: 'code-review' },
+    ],
+    budgets: { S: 'tiny edit', M: 'normal fix', L: 'cross-module', XL: 'architecture' },
+  };
+  const skill = buildSkill(config);
+  assert.match(skill, /name: acme/);
+  assert.match(skill, /- debug: `references\/debugging\.md`/);
+  assert.match(skill, /- review: `references\/code-review\.md`/);
+  assert.match(skill, /`S`: tiny edit/);
+});
+
+test('buildSkill word count is under 400', () => {
+  const config = {
+    name: 'test',
+    task_types: [{ id: 'debug', reference: 'debugging' }],
+    budgets: { S: 'small', M: 'medium', L: 'large', XL: 'xlarge' },
+  };
+  const skill = buildSkill(config);
+  const words = skill.split(/\s+/).filter(Boolean).length;
+  assert.ok(words < 400, `skill is ${words} words, expected < 400`);
+});
