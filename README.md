@@ -1,6 +1,6 @@
 # Tokenwise
 
-A self-hosted server that gives your engineering team a shared AI workflow. Every agent follows the same process. You control it from a dashboard.
+A self-hosted server that gives your engineering team a shared AI workflow Every agent follows the same process. You control it from a dashboard.
 
 ## The problem
 
