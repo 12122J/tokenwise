@@ -1,8 +1,23 @@
 {
-  "name": "tokenwise",
+  "name": "@j___avi/tokenwise",
   "version": "0.1.0",
-  "description": "Token-aware agent workflow skills, knowledge cards, and evals.",
+  "description": "Self-hosted server that gives your engineering team a shared AI agent workflow.",
   "type": "module",
+  "bin": {
+    "tokenwise": "server/index.mjs"
+  },
+  "files": [
+    "server/",
+    "framework/",
+    "scripts/contribute-finding.mjs"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/12122J/tokenwise.git"
+  },
   "scripts": {
     "build": "node scripts/build-skill.mjs --config framework/config.yaml",
     "build:watch": "node scripts/build-skill.mjs --config framework/config.yaml --watch",

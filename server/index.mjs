@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import express from 'express';
 import { join, resolve, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
