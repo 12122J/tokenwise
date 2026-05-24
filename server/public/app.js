@@ -6,6 +6,7 @@ async function api(method, path, body) {
   const opts = { method, headers: { 'Content-Type': 'application/json' } };
   if (body) opts.body = JSON.stringify(body);
   const res = await fetch('/admin/api' + path, opts);
+  if (res.status === 401) { window.location = '/login'; return; }
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
@@ -23,6 +24,7 @@ const views = { findings, cards, config, keys, setup };
 let currentView = null;
 
 function navigate(view) {
+  editingCard = null;
   document.querySelectorAll('.sidebar-item').forEach(el => {
     el.classList.toggle('active', el.dataset.view === view);
   });
@@ -121,8 +123,9 @@ async function cards(selectCard) {
         </div>
         <textarea class="editor-textarea" id="card-editor">${content}</textarea>
         <div class="editor-footer">
-          <span class="editor-hint">Keep under 200 words. Changes are served to agents immediately after saving.</span>
-          <button class="btn btn-primary" id="save-card">Save + rebuild</button>
+          <span class="editor-hint">Keep under 200 words. Saved changes are served to agents on next session.</span>
+          <button class="btn btn-ghost" id="delete-card">Delete</button>
+          <button class="btn btn-primary" id="save-card">Save</button>
         </div>
       </div>
     `;
@@ -135,7 +138,14 @@ async function cards(selectCard) {
     $('save-card').addEventListener('click', async () => {
       await api('PUT', '/cards/' + name, { content: $('card-editor').value });
       $('save-card').textContent = 'Saved';
-      setTimeout(() => { $('save-card').textContent = 'Save + rebuild'; }, 1500);
+      setTimeout(() => { $('save-card').textContent = 'Save'; }, 1500);
+    });
+    $('delete-card').addEventListener('click', async () => {
+      if (confirm(`Delete "${name}"? This cannot be undone.`)) {
+        await api('DELETE', '/cards/' + name);
+        editingCard = null;
+        cards();
+      }
     });
     editingCard = name;
     return;
@@ -147,6 +157,10 @@ async function cards(selectCard) {
       <span class="page-subtitle">Reference cards served to agents. Click to edit.</span>
     </div>
     <div class="cards-list">
+      <div class="key-new-form" style="margin-bottom:1rem">
+        <input type="text" id="new-card-name" placeholder="New card name (e.g. testing)">
+        <button class="btn btn-primary" id="create-card">New card</button>
+      </div>
       ${all.map(c => `
         <div class="card-row" data-card="${c.name}">
           <span class="card-name">${c.name}</span>
@@ -155,6 +169,12 @@ async function cards(selectCard) {
       `).join('')}
     </div>
   `;
+  $('create-card').addEventListener('click', async () => {
+    const raw = $('new-card-name').value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    if (!raw) return;
+    await api('PUT', '/cards/' + raw, { content: `# ${raw.charAt(0).toUpperCase() + raw.slice(1)}\n\n` });
+    cards(raw);
+  });
   main().querySelectorAll('.card-row').forEach(row => {
     row.addEventListener('click', () => cards(row.dataset.card));
   });
@@ -216,8 +236,8 @@ async function keys(newKey) {
       `).join('')}
       <div style="margin-top:1.5rem">
         <div class="section-title">Employee settings.json</div>
-        <div class="section-desc" style="margin-bottom:0.75rem">Give this file to employees (or deploy via MDM). Replace YOUR_API_KEY with a key from above.</div>
-        <div class="snippet">${snippet.snippet}</div>
+        <div class="section-desc" style="margin-bottom:0.75rem">${newKey ? 'Ready to copy — key is already filled in.' : 'Replace YOUR_API_KEY with a key from above.'}</div>
+        <div class="snippet">${newKey ? snippet.snippet.replace('YOUR_API_KEY', newKey) : snippet.snippet}</div>
       </div>
     </div>
   `;

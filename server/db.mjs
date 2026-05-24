@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, unlinkSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { randomBytes, createHash } from 'node:crypto';
 
@@ -34,6 +34,11 @@ export const db = {
   setCard(name, content) {
     ensureDirs();
     writeFileSync(join(CARDS_DIR, `${name}.md`), content);
+  },
+
+  deleteCard(name) {
+    const p = join(CARDS_DIR, `${name}.md`);
+    if (existsSync(p)) unlinkSync(p);
   },
 
   getCards() {

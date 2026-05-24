@@ -55,6 +55,11 @@ adminApiRouter.put('/cards/:name', (req, res) => {
   res.json({ ok: true });
 });
 
+adminApiRouter.delete('/cards/:name', (req, res) => {
+  db.deleteCard(req.params.name);
+  res.json({ ok: true });
+});
+
 // ── Config ─────────────────────────────────────────────────────────────────────
 
 adminApiRouter.get('/config', (req, res) => {

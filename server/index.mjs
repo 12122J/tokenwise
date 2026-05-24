@@ -68,9 +68,37 @@ app.use('/setup', setupRouter);
 app.use('/api', agentAuth, agentRouter);
 app.use('/admin/api', adminAuth, adminApiRouter);
 
+app.get('/login', (req, res) => {
+  const settings = db.getSettings();
+  if (!settings?.setup_complete) return res.redirect('/setup');
+  res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tokenwise — Log in</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="setup-page">
+  <div class="setup-card">
+    <h1>Tokenwise</h1>
+    <p class="subtitle">Enter your admin password.</p>
+    <form method="POST" action="/setup/login">
+      <label>Admin password
+        <input type="password" name="password" required autofocus>
+      </label>
+      <button type="submit">Log in</button>
+    </form>
+  </div>
+</body>
+</html>`);
+});
+
 app.get('/admin', (req, res) => {
   const settings = db.getSettings();
   if (!settings?.setup_complete) return res.redirect('/setup');
+  const token = req.cookies?.admin_token;
+  if (!token || token !== settings.admin_token) return res.redirect('/login');
   res.sendFile(join(__dirname, 'public', 'index.html'));
 });
 
