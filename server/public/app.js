@@ -1,12 +1,13 @@
 // ── Utilities ──────────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
 const main = () => $('main');
+const escHtml = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 async function api(method, path, body) {
   const opts = { method, headers: { 'Content-Type': 'application/json' } };
   if (body) opts.body = JSON.stringify(body);
   const res = await fetch('/admin/api' + path, opts);
-  if (res.status === 401) { window.location = '/login'; return; }
+  if (res.status === 401) { window.location = '/login'; throw new Error('redirecting'); }
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
@@ -37,7 +38,16 @@ function navigate(view) {
     el.classList.toggle('active', el.dataset.view === view);
   });
   currentView = view;
-  (views[view] || findings)();
+  (views[view] || findings)().catch(err => {
+    if (err.message === 'redirecting') return;
+    main().innerHTML = `
+      <div style="padding:1.5rem">
+        <div style="color:var(--text-muted);margin-bottom:0.75rem">Failed to load — ${escHtml(err.message)}</div>
+        <button class="btn btn-ghost" id="retry-btn">Retry</button>
+      </div>
+    `;
+    document.getElementById('retry-btn')?.addEventListener('click', () => navigate(view));
+  });
 }
 
 document.querySelectorAll('.sidebar-item').forEach(el => {
@@ -71,7 +81,14 @@ async function findings() {
         <div class="section-label">Reviewed</div>
         ${reviewed.map(findingRow).join('')}
       ` : ''}
-      ${all.length === 0 ? '<div style="color:var(--text-muted);padding:0.5rem 0;">No findings yet. Agents submit findings using the contribute-finding script.</div>' : ''}
+      ${all.length === 0 ? `<div style="padding:1.25rem 0;max-width:560px">
+        <div style="color:var(--text);font-weight:500;margin-bottom:0.4rem">No findings yet</div>
+        <div style="color:var(--text-muted);line-height:1.6;margin-bottom:1rem">Agents can surface patterns they discover during tasks. You review them here and merge the ones worth keeping — they get appended to the relevant reference card and served to the whole team next session.</div>
+        <div class="snippet">node scripts/contribute-finding.mjs \\
+  --card debugging \\
+  --finding "Check git log before any search — regressions are almost always recent" \\
+  --task "auth token expiry bug"</div>
+      </div>` : ''}
     </div>
   `;
 
@@ -189,6 +206,24 @@ async function cards(selectCard) {
 }
 
 // ── Config ─────────────────────────────────────────────────────────────────────
+function taskTypeRow(t) {
+  return `<div class="cfg-row" style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.35rem">
+    <input class="cfg-task-id" type="text" placeholder="Task id (e.g. debug)" value="${escHtml(t.id)}" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:4px 7px;color:var(--text);font-size:12px;width:140px">
+    <span style="color:var(--text-muted);font-size:11px">→ card</span>
+    <input class="cfg-task-ref" type="text" placeholder="Card name (e.g. debugging)" value="${escHtml(t.reference)}" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:4px 7px;color:var(--text);font-size:12px;width:160px">
+    <button class="btn btn-ghost" data-remove-row style="padding:3px 8px;font-size:11px">✕</button>
+  </div>`;
+}
+
+function budgetRow(k, v) {
+  return `<div class="cfg-row" style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.35rem">
+    <input class="cfg-budget-key" type="text" placeholder="Tier (e.g. fast)" value="${escHtml(k)}" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:4px 7px;color:var(--text);font-size:12px;width:120px">
+    <span style="color:var(--text-muted);font-size:11px">:</span>
+    <input class="cfg-budget-val" type="text" placeholder="Description (e.g. 1-2 tool calls, no exploration)" value="${escHtml(v)}" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:4px 7px;color:var(--text);font-size:12px;flex:1">
+    <button class="btn btn-ghost" data-remove-row style="padding:3px 8px;font-size:11px">✕</button>
+  </div>`;
+}
+
 async function config() {
   const cfg = await api('GET', '/config');
   main().innerHTML = `
@@ -197,19 +232,62 @@ async function config() {
       <span class="page-subtitle">Task types and budget tiers</span>
     </div>
     <div class="content-area">
-      <div class="section-title">Config (JSON)</div>
-      <div class="section-desc">Edit task types and budgets. Each task type must have a matching card in Cards.</div>
-      <textarea class="editor-textarea" id="config-editor" style="min-height:280px">${JSON.stringify(cfg, null, 2)}</textarea>
-      <div class="editor-footer" style="margin-top:0.75rem">
+      <div style="margin-bottom:1.25rem">
+        <div class="section-title" style="margin-bottom:0.4rem">Team name</div>
+        <input type="text" id="cfg-name" value="${escHtml(cfg.name || '')}" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:5px 8px;color:var(--text);font-size:13px;width:240px">
+      </div>
+
+      <div style="margin-bottom:1.25rem">
+        <div class="section-title" style="margin-bottom:0.25rem">Task types</div>
+        <div class="section-desc" style="margin-bottom:0.6rem">Each type maps to a reference card. The router picks one per session.</div>
+        <div id="task-types-list">${cfg.task_types.map(taskTypeRow).join('')}</div>
+        <button class="btn btn-ghost" id="add-task-type" style="margin-top:0.4rem;font-size:11px">+ Add task type</button>
+      </div>
+
+      <div style="margin-bottom:1.25rem">
+        <div class="section-title" style="margin-bottom:0.25rem">Budgets</div>
+        <div class="section-desc" style="margin-bottom:0.6rem">Token/effort tiers agents can select from before starting a task.</div>
+        <div id="budgets-list">${Object.entries(cfg.budgets).map(([k, v]) => budgetRow(k, v)).join('')}</div>
+        <button class="btn btn-ghost" id="add-budget" style="margin-top:0.4rem;font-size:11px">+ Add budget</button>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:0.75rem">
         <button class="btn btn-primary" id="save-config">Save config</button>
         <span id="config-status" style="color:var(--text-muted);font-size:11px"></span>
       </div>
     </div>
   `;
+
+  $('add-task-type').addEventListener('click', () => {
+    const div = document.createElement('div');
+    div.innerHTML = taskTypeRow({ id: '', reference: '' });
+    $('task-types-list').appendChild(div.firstElementChild);
+  });
+
+  $('add-budget').addEventListener('click', () => {
+    const div = document.createElement('div');
+    div.innerHTML = budgetRow('', '');
+    $('budgets-list').appendChild(div.firstElementChild);
+  });
+
+  main().addEventListener('click', e => {
+    if ('removeRow' in e.target.dataset) e.target.closest('.cfg-row').remove();
+  });
+
   $('save-config').addEventListener('click', async () => {
+    const name = $('cfg-name').value.trim();
+    const task_types = [...$('task-types-list').querySelectorAll('.cfg-row')].map(row => ({
+      id: row.querySelector('.cfg-task-id').value.trim(),
+      reference: row.querySelector('.cfg-task-ref').value.trim(),
+    })).filter(t => t.id && t.reference);
+    const budgets = {};
+    for (const row of $('budgets-list').querySelectorAll('.cfg-row')) {
+      const k = row.querySelector('.cfg-budget-key').value.trim();
+      const v = row.querySelector('.cfg-budget-val').value.trim();
+      if (k && v) budgets[k] = v;
+    }
     try {
-      const parsed = JSON.parse($('config-editor').value);
-      await api('PUT', '/config', parsed);
+      await api('PUT', '/config', { name, task_types, budgets });
       $('config-status').textContent = 'Saved';
       setTimeout(() => { $('config-status').textContent = ''; }, 2000);
     } catch (e) {
@@ -398,6 +476,19 @@ async function setup(generatedKey) {
       </div>
 
     </div>
+
+    <div style="border-top:1px solid var(--border-subtle);padding:1.25rem 1.25rem 1.5rem">
+      <div class="section-title" style="margin-bottom:0.25rem">Change admin password</div>
+      <div class="section-desc" style="margin-bottom:0.75rem">You'll need to log in again after changing.</div>
+      <div style="display:flex;flex-direction:column;gap:0.4rem;max-width:300px">
+        <input type="password" id="pw-current" placeholder="Current password" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:5px 8px;color:var(--text);font-size:12px">
+        <input type="password" id="pw-new" placeholder="New password (8+ chars)" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:5px 8px;color:var(--text);font-size:12px">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-top:0.2rem">
+          <button class="btn btn-primary" id="change-pw-btn">Change password</button>
+          <span id="change-pw-status" style="font-size:11px"></span>
+        </div>
+      </div>
+    </div>
   `;
 
   if ($('setup-gen-key')) {
@@ -464,6 +555,24 @@ async function setup(generatedKey) {
 
   $('verify-key-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') $('verify-key-btn').click();
+  });
+
+  $('change-pw-btn').addEventListener('click', async () => {
+    const current = $('pw-current').value;
+    const newPassword = $('pw-new').value;
+    const status = $('change-pw-status');
+    if (!current || !newPassword) { status.textContent = 'Fill in both fields'; status.style.color = 'var(--red)'; return; }
+    try {
+      await api('POST', '/change-password', { current, newPassword });
+      status.textContent = 'Password changed — log in again';
+      status.style.color = '#3fb950';
+      $('pw-current').value = '';
+      $('pw-new').value = '';
+      setTimeout(() => { window.location = '/login'; }, 1500);
+    } catch (e) {
+      status.textContent = e.message;
+      status.style.color = 'var(--red)';
+    }
   });
 }
 

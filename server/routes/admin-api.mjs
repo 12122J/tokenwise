@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { db } from '../db.mjs';
 import { buildSkill } from '../lib/builder.mjs';
+import { hashPassword } from '../middleware/adminAuth.mjs';
 
 export const adminApiRouter = Router();
 
@@ -91,6 +92,18 @@ adminApiRouter.post('/keys', (req, res) => {
 
 adminApiRouter.delete('/keys/:id', (req, res) => {
   db.deleteKey(req.params.id);
+  res.json({ ok: true });
+});
+
+// ── Change password ────────────────────────────────────────────────────────────
+
+adminApiRouter.post('/change-password', (req, res) => {
+  const { current, newPassword } = req.body || {};
+  if (!current || !newPassword) return res.status(400).json({ error: 'current and newPassword are required' });
+  if (newPassword.length < 8) return res.status(400).json({ error: 'New password must be at least 8 characters' });
+  const settings = db.getSettings();
+  if (hashPassword(current) !== settings.password_hash) return res.status(401).json({ error: 'Current password is incorrect' });
+  db.setSettings({ ...settings, password_hash: hashPassword(newPassword) });
   res.json({ ok: true });
 });
 

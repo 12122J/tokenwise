@@ -76,7 +76,31 @@ npm install
 npm run server
 ```
 
-Visit `http://localhost:3000` to complete setup. For production, deploy to any Node.js host behind HTTPS.
+Visit `http://localhost:3000` to complete setup.
+
+## HTTPS
+
+The API key travels in every agent request header. Without HTTPS it goes in plaintext. Don't run this on a shared network without it.
+
+Any Node.js host that terminates TLS for you works — Fly.io, Railway, Render, etc. If you're running on a VM, nginx in front is the usual setup:
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name your-server.example.com;
+
+    ssl_certificate     /etc/letsencrypt/live/your-server.example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/your-server.example.com/privkey.pem;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+Get a cert with `certbot --nginx -d your-server.example.com`. After that, the server auto-detects `X-Forwarded-Proto: https` and generates correct curl commands in the injected skill.
 
 ## Deploy to your team
 
