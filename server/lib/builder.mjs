@@ -1,10 +1,13 @@
-export function buildSkill(config) {
+export function buildSkill(config, opts = {}) {
   const name = config.name || 'tokenwise';
   const taskTypes = config.task_types || [];
   const budgets = config.budgets || {};
+  const { serverUrl, apiKey } = opts;
 
   const refLines = taskTypes
-    .map(t => `   - ${t.id}: \`references/${t.reference}.md\``)
+    .map(t => serverUrl && apiKey
+      ? `   - ${t.id}: run \`curl -sf -H 'X-API-Key: ${apiKey}' ${serverUrl}/api/skill/references/${t.reference}\` and read the output`
+      : `   - ${t.id}: \`references/${t.reference}.md\``)
     .join('\n');
 
   const budgetLines = Object.entries(budgets)

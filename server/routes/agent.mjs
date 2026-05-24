@@ -8,7 +8,9 @@ agentRouter.get('/skill', (req, res) => {
   const config = db.getConfig();
   if (!config) return res.status(503).json({ error: 'Server not configured yet' });
   const cards = db.getCards();
-  const skillText = buildSkill(config);
+  const apiKey = req.headers['x-api-key'];
+  const serverUrl = `${req.secure ? 'https' : 'http'}://${req.headers.host}`;
+  const skillText = buildSkill(config, { serverUrl, apiKey });
   const welcome = `[${config.name} framework loaded — ${config.task_types.length} task types, ${Object.keys(cards).length} cards]\n\n`;
   res.json({
     hookSpecificOutput: {
