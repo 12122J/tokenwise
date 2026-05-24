@@ -335,7 +335,11 @@ async function setup(generatedKey) {
           <div class="section-title">Generate an API key</div>
           <div class="section-desc">Each team or deployment gets its own key. Revoke it any time from API Keys.</div>
           ${generatedKey
-            ? `<div class="key-reveal">Key generated (shown once):\n\n${generatedKey}</div>`
+            ? `<div class="key-reveal">Key generated (shown once):\n\n${generatedKey}</div>
+               <div style="display:flex;align-items:center;gap:0.75rem;margin-top:0.5rem">
+                 <button class="btn btn-ghost" id="test-key-btn">Test connection</button>
+                 <span id="test-key-result" style="font-size:11px"></span>
+               </div>`
             : `<div class="key-new-form">
                 <input type="text" id="setup-key-label" placeholder="Label (e.g. engineering-team)">
                 <button class="btn btn-primary" id="setup-gen-key">Generate key</button>
@@ -354,9 +358,17 @@ async function setup(generatedKey) {
             <button class="btn btn-primary" id="dl-cc-settings">Download settings.json</button>
             <button class="btn btn-ghost" id="dl-cc-script">Download install.sh</button>
           </div>
-          <div class="section-desc" style="font-size:11px;margin-bottom:0">
+          <div class="section-desc" style="font-size:11px;margin-bottom:1rem">
             <strong style="color:var(--text)">settings.json</strong> — drop into <code>~/.claude-personal/</code> on the employee's machine.<br>
             <strong style="color:var(--text)">install.sh</strong> — employee runs it once; installs the file automatically and backs up any existing one.
+          </div>
+          <div style="border-top:1px solid var(--border-subtle);padding-top:0.9rem">
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:0.4rem">Verify a key</div>
+            <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+              <input type="text" id="verify-key-input" placeholder="Paste any API key to test" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:5px 8px;color:var(--text);font-size:12px;flex:1;min-width:200px;font-family:monospace">
+              <button class="btn btn-ghost" id="verify-key-btn">Test</button>
+              <span id="verify-key-result" style="font-size:11px"></span>
+            </div>
           </div>
         </div>
       </div>
@@ -413,6 +425,46 @@ async function setup(generatedKey) {
   $('dl-codex').addEventListener('click', () => downloadAdapter('AGENTS.md', buildCodexAdapter));
   $('dl-opencode').addEventListener('click', () => downloadAdapter('AGENTS.md', buildCodexAdapter));
   $('dl-cursor').addEventListener('click', () => downloadAdapter('tokenwise.mdc', buildCursorAdapter));
+
+  async function testKey(key, resultEl) {
+    resultEl.textContent = 'Testing...';
+    resultEl.style.color = 'var(--text-muted)';
+    try {
+      const res = await fetch('/api/skill', { headers: { 'X-API-Key': key } });
+      if (res.ok) {
+        const data = await res.json();
+        const firstLine = data.hookSpecificOutput.additionalContext.split('\n')[0];
+        resultEl.textContent = 'Connected — ' + firstLine;
+        resultEl.style.color = '#3fb950';
+      } else if (res.status === 401) {
+        resultEl.textContent = 'Invalid key';
+        resultEl.style.color = 'var(--red)';
+      } else if (res.status === 503) {
+        resultEl.textContent = 'Server not configured yet';
+        resultEl.style.color = 'var(--red)';
+      } else {
+        resultEl.textContent = `Error ${res.status}`;
+        resultEl.style.color = 'var(--red)';
+      }
+    } catch (e) {
+      resultEl.textContent = 'Could not reach server';
+      resultEl.style.color = 'var(--red)';
+    }
+  }
+
+  if ($('test-key-btn')) {
+    $('test-key-btn').addEventListener('click', () => testKey(generatedKey, $('test-key-result')));
+  }
+
+  $('verify-key-btn').addEventListener('click', () => {
+    const key = $('verify-key-input').value.trim();
+    if (!key) return;
+    testKey(key, $('verify-key-result'));
+  });
+
+  $('verify-key-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') $('verify-key-btn').click();
+  });
 }
 
 // ── Init ───────────────────────────────────────────────────────────────────────
