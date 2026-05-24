@@ -179,27 +179,63 @@ async function cards(selectCard) {
   main().innerHTML = `
     <div class="page-header">
       <span class="page-title">Cards</span>
-      <span class="page-subtitle">Reference cards served to agents. Click to edit.</span>
+      <span class="page-subtitle">${all.length} card${all.length !== 1 ? 's' : ''} · click to edit</span>
+      <button class="btn btn-primary" id="new-card-btn" style="margin-left:auto;padding:4px 14px;font-size:12px">+ New card</button>
+    </div>
+    <div id="new-card-panel" class="new-card-panel">
+      <div class="new-card-inner">
+        <input type="text" id="new-card-name" class="new-card-input" placeholder="Card name — e.g. testing, onboarding, security" autocomplete="off">
+        <div id="new-card-slug" class="new-card-slug">Type a name above</div>
+        <div style="display:flex;gap:0.5rem;margin-top:0.75rem">
+          <button class="btn btn-primary" id="create-card">Create card</button>
+          <button class="btn btn-ghost" id="cancel-new-card">Cancel</button>
+        </div>
+      </div>
     </div>
     <div class="cards-list">
-      <div class="key-new-form" style="margin-bottom:1rem">
-        <input type="text" id="new-card-name" placeholder="New card name (e.g. testing)">
-        <button class="btn btn-primary" id="create-card">New card</button>
-      </div>
+      ${all.length === 0 ? '<div style="color:var(--text-muted);padding:0.5rem 0;font-size:12px">No cards yet. Create one above.</div>' : ''}
       ${all.map(c => `
-        <div class="card-row" data-card="${c.name}">
-          <span class="card-name">${c.name}</span>
+        <div class="card-row" data-card="${escHtml(c.name)}">
+          <span class="card-name">${escHtml(c.name)}</span>
           <span class="card-words ${c.words > 200 ? 'over' : ''}">${c.words} words</span>
         </div>
       `).join('')}
     </div>
   `;
+
+  $('new-card-btn').addEventListener('click', () => {
+    $('new-card-panel').classList.add('open');
+    $('new-card-name').focus();
+    $('new-card-btn').style.display = 'none';
+  });
+
+  $('cancel-new-card').addEventListener('click', () => {
+    $('new-card-panel').classList.remove('open');
+    $('new-card-name').value = '';
+    $('new-card-slug').textContent = 'Type a name above';
+    $('new-card-btn').style.display = '';
+  });
+
+  $('new-card-name').addEventListener('input', () => {
+    const raw = $('new-card-name').value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    $('new-card-slug').textContent = raw ? `Will create: ${raw}.md` : 'Type a name above';
+    $('new-card-slug').style.color = raw ? 'var(--accent)' : 'var(--text-muted)';
+  });
+
+  $('new-card-name').addEventListener('keydown', e => {
+    if (e.key === 'Enter') $('create-card').click();
+    if (e.key === 'Escape') $('cancel-new-card').click();
+  });
+
   $('create-card').addEventListener('click', async () => {
     const raw = $('new-card-name').value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-    if (!raw) return;
+    if (!raw) { $('new-card-name').focus(); $('new-card-name').style.borderColor = 'var(--red)'; return; }
+    $('create-card').textContent = 'Creating…';
+    $('create-card').disabled = true;
     await api('PUT', '/cards/' + raw, { content: `# ${raw.charAt(0).toUpperCase() + raw.slice(1)}\n\n` });
     cards(raw);
   });
+
   main().querySelectorAll('.card-row').forEach(row => {
     row.addEventListener('click', () => cards(row.dataset.card));
   });

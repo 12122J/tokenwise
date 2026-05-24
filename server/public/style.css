@@ -216,6 +216,46 @@ body.setup-page {
   margin: 1rem 0 0.5rem;
 }
 
+/* ── New card panel ── */
+.new-card-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.2s ease;
+  overflow: hidden;
+  border-bottom: 1px solid transparent;
+}
+.new-card-panel.open {
+  grid-template-rows: 1fr;
+  border-bottom-color: var(--border-subtle);
+}
+.new-card-inner {
+  padding: 0 1.25rem;
+  overflow: hidden;
+  min-height: 0;
+}
+.new-card-panel.open .new-card-inner {
+  padding: 1rem 1.25rem 1.1rem;
+}
+.new-card-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 0.55rem 0.75rem;
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.new-card-input:focus { border-color: var(--accent); }
+.new-card-slug {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: monospace;
+  margin-top: 5px;
+  transition: color 0.15s;
+}
+
 /* ── Card editor ── */
 .cards-list { padding: 1rem 1.25rem; }
 .card-row {
