@@ -1,93 +1,64 @@
-# Tokenwise
+<h1 align="center">Tokenwise</h1>
 
-A self-hosted server that gives your engineering team a shared AI workflow Every agent follows the same process. You control it from a dashboard.
+<p align="center">
+  <strong>Ship one AI workflow to your entire engineering team.</strong><br>
+  Every agent follows the same process. You control it from a dashboard.
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/@j___avi/tokenwise"><img src="https://img.shields.io/npm/v/@j___avi/tokenwise?color=000&labelColor=000&style=flat-square" alt="npm"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-000?labelColor=000&style=flat-square" alt="MIT"></a>
+</p>
+
+<br>
+
+<p align="center">
+  <img src="docs/assets/dashboard-cards.png" width="860" alt="Tokenwise admin dashboard showing the cards list" />
+</p>
+
+<br>
 
 ## The problem
 
-When you have 10 engineers using Claude Code, you have 10 different workflows. One follows TDD. One doesn't. One loads every tool available. One runs completely raw. No standard.
+10 engineers using Claude Code means 10 different workflows. One follows TDD. One doesn't. One loads every tool available. One runs completely raw.
 
-It's also hard to update. If you want every agent to check git log before searching — good luck propagating that to everyone.
+And when you want to change something — say, everyone should check `git log` before searching — there's no way to push that out. You'd have to update every person's config manually and hope they actually restart.
 
-Tokenwise fixes both. One server, one place to manage the workflow, every agent on the team picks it up automatically.
+Tokenwise fixes both. One server, one dashboard, every agent on the team stays in sync automatically.
 
 ## How it works
 
-```mermaid
-flowchart LR
-    A([employee opens\nClaude Code]) --> B[hook fires\nfetches router from server]
-    B --> C[router classifies\nthe task]
-    C -->|debug| D[fetches debugging card]
-    C -->|implement| E[fetches implementation card]
-    C -->|answer| F[nothing loaded]
-    style B fill:#1c2128,stroke:#6e40c9,color:#e6edf3
-    style C fill:#1c2128,stroke:#6e40c9,color:#e6edf3
-```
+When an engineer opens Claude Code, a hook fires and fetches the team's workflow from the Tokenwise server. The agent gets a router that classifies the task and loads the right reference card on demand — a debug card for bugs, an implementation card for features, nothing for quick answers.
 
-**For the engineer:** IT drops one config file on their machine. That's it. Every session after that, their agent loads the team's workflow automatically. They don't know it's happening.
+**For the engineer:** IT drops one config file on their machine. After that, every session loads the workflow automatically. They don't have to do anything.
 
-**For the admin:** edit a card in the dashboard, hit save. Every agent on the team picks it up next session. No reinstall. No IT ticket. No action from anyone.
+**For the admin:** edit a card in the dashboard, hit save. Every agent on the team picks it up next session — no reinstall, no IT ticket, no action from anyone.
+
+<p align="center">
+  <img src="docs/assets/dashboard-editor.png" width="860" alt="Tokenwise card editor" />
+</p>
 
 ## Reference cards
 
 The framework has two layers:
 
-**The router** (~270 words, always loaded) — injected at session start. Tells Claude to classify the task, pick a budget, and load one reference card if the task needs it.
+**The router** (always loaded at session start) — classifies the task, picks a budget, and decides which card to fetch. Loads once, stays lightweight.
 
-**Reference cards** (~200 words each, loaded on demand) — the router fetches them from the server only when relevant. A debug task loads `debugging.md`. A code review loads `code-review.md`. A quick answer loads nothing.
+**Reference cards** (loaded on demand, ~200 words each) — the router fetches them only when relevant. A debug task loads `debugging.md`. A code review loads `code-review.md`. A quick answer loads nothing.
 
-Cards live on your server. You edit them in the dashboard. The curl command to fetch each card is baked into the injected router with the team's API key — so no files need to be on the engineer's machine.
+Cards live on your server. You own them. Edit in the dashboard and they're live next session — no files on the engineer's machine, no reinstall.
 
-## Dashboard
+Seven cards ship with solid defaults out of the box:
 
-```
- tokenwise · admin
-──────────────────────────────────────────────────────────────────────
-
-  CONTENT         │  Cards
-  Cards      ←    │  4 cards · click to edit
-  Config          │
-                  │  debugging          187 words
-  DEPLOY          │  implementation     201 words
-  API Keys        │  code-review        194 words
-  Setup           │  exploration        178 words
-
-──────────────────────────────────────────────────────────────────────
-
-  CONTENT         │  Setup · Deploy to your team
-  Cards           │
-  Config          │  1  Your server is running
-                  │     https://acme.example.com · 6 task types
-  DEPLOY          │
-  API Keys        │  2  Generate an API key
-  Setup      ←    │     [ engineering-team_________ ]  [Generate]
-                  │
-                  │  3  Claude Code — hook injection
-                  │     [↓ settings.json]  [↓ install.sh]
-                  │
-                  │  4  Other platforms
-                  │     [↓ AGENTS.md]   [↓ .mdc rule]
-
-──────────────────────────────────────────────────────────────────────
-```
-
-## What ships
-
-```
-server/
-├── Admin dashboard     ← edit cards, manage API keys
-├── Agent API           ← serves the router + cards to Claude Code on demand
-└── Setup flow          ← generates settings.json and install.sh for your team
-
-framework/
-└── references/
-    ├── debugging.md
-    ├── implementation.md
-    ├── code-review.md
-    ├── exploration.md
-    └── onboarding.md
-```
-
-Five reference cards ship with solid defaults. They work immediately out of the box. Admin updates them in the dashboard — changes are live for the whole team next session.
+| Card | What it covers |
+|---|---|
+| `debugging` | Root cause first, four-phase process, component boundary diagnostics |
+| `implementation` | Minimal green, test-first, YAGNI |
+| `code-review` | Evidence-based review, technical reception, when to push back |
+| `exploration` | Evidence ladder, stop rules, waste patterns |
+| `onboarding` | Orient fast in unfamiliar codebases |
+| `finishing` | Branch completion — merge, PR, discard workflow |
+| `subagents` | Parallel dispatch, isolated context, integration patterns |
 
 ## Get started
 
@@ -96,13 +67,34 @@ npm install
 npm run server
 ```
 
-Visit `http://localhost:3000` to complete setup.
+Visit `http://localhost:3000` to complete setup — set your admin password, create an API key, and download the hook config for your team.
+
+## Deploy to your team
+
+From the Setup page:
+
+1. Generate an API key
+2. Download `settings.json` (drop into `~/.claude-personal/`) or `install.sh` (employee runs it once)
+3. IT can push `settings.json` via MDM (Jamf, Intune) to all machines automatically — same mechanism companies use to push antivirus configs
+
+Every engineer's Claude Code session loads the framework from that point. You update a card, they get it next session.
+
+## Platform support
+
+| Platform | Method |
+|---|---|
+| Claude Code CLI / Desktop / VS Code | Hook injection — updates automatically |
+| Codex | Static AGENTS.md — re-download after card updates |
+| Cursor | Static .mdc rule — re-download after card updates |
+| opencode | Static AGENTS.md — re-download after card updates |
+
+Download static adapter files from the Setup page.
 
 ## HTTPS
 
 The API key travels in every agent request header. Without HTTPS it goes in plaintext. Don't run this on a shared network without it.
 
-Any Node.js host that terminates TLS for you works — Fly.io, Railway, Render, etc. If you're running on a VM, nginx in front is the usual setup:
+Any Node.js host works — Fly.io, Railway, Render. For a VM with nginx:
 
 ```nginx
 server {
@@ -120,33 +112,8 @@ server {
 }
 ```
 
-Get a cert with `certbot --nginx -d your-server.example.com`. After that, the server auto-detects `X-Forwarded-Proto: https` and generates correct curl commands in the injected skill.
+Get a cert: `certbot --nginx -d your-server.example.com`. The server auto-detects `X-Forwarded-Proto: https` and generates correct curl commands in the injected skill.
 
-## Deploy to your team
+## License
 
-From the Setup page in the dashboard:
-
-1. Generate an API key
-2. Download `settings.json` (drop into `~/.claude-personal/`) or `install.sh` (employee runs it once)
-3. IT can push `settings.json` via MDM (Jamf, Intune) to all machines automatically — same way companies push antivirus configs
-
-From that point on every engineer's Claude Code session loads the framework. You update a card, they get it next session.
-
-## Other platforms
-
-Codex, Cursor, and opencode don't support hook injection. From the Setup page you can download a static adapter file (AGENTS.md or .mdc) with the current framework embedded. Re-download when you update cards.
-
-## Token savings
-
-Not the point right now and there's no solid data behind it yet.
-
-The original premise was that loading one ~200-word card beats loading multiple heavy workflow skills every session. That's probably true. But measuring it properly takes more runs across more task types than we've done.
-
-Open to discussing this — if you're running evals on agent workflows and want to compare notes, reach out.
-
-## Local checks
-
-```bash
-npm run check
-```
-
+MIT
