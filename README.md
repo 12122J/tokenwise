@@ -37,47 +37,30 @@ The framework has two layers:
 
 Cards live on your server. You edit them in the dashboard. The curl command to fetch each card is baked into the injected router with the team's API key — so no files need to be on the engineer's machine.
 
-## Agent findings
-
-Agents can surface patterns they discover during tasks:
-
-```bash
-node scripts/contribute-finding.mjs \
-  --card debugging \
-  --finding "Check git log before any search — regressions are almost always recent" \
-  --task "auth token expiry bug"
-```
-
-Findings show up in the dashboard for the admin to review. Merge the useful ones — they get added to the relevant card and served to all agents on next session.
-
 ## Dashboard
 
 ```
  tokenwise · admin
 ──────────────────────────────────────────────────────────────────────
 
-  CONTENT         │  Findings
-  Findings   [2]  │  2 findings need your review
-  Cards           │  Agents surfaced these during recent tasks.
-  Config          │  Merge the useful ones — they update the card.
-                  │
-  DEPLOY          │  ┌────────────────────────────────────────────┐
-  API Keys        │  │ debugging       just now · auth token bug  │
-  Setup           │  │ Check git log before any search —          │
-                  │  │ regressions are almost always recent       │
-                  │  │ → adds to debugging.md   [Merge]  [Skip]  │
-                  │  └────────────────────────────────────────────┘
+  CONTENT         │  Cards
+  Cards      ←    │  4 cards · click to edit
+  Config          │
+                  │  debugging          187 words
+  DEPLOY          │  implementation     201 words
+  API Keys        │  code-review        194 words
+  Setup           │  exploration        178 words
 
 ──────────────────────────────────────────────────────────────────────
 
   CONTENT         │  Setup · Deploy to your team
-  Findings        │
-  Cards           │  1  Your server is running
-  Config          │     https://acme.example.com · 6 task types
+  Cards           │
+  Config          │  1  Your server is running
+                  │     https://acme.example.com · 6 task types
+  DEPLOY          │
+  API Keys        │  2  Generate an API key
+  Setup      ←    │     [ engineering-team_________ ]  [Generate]
                   │
-  DEPLOY          │  2  Generate an API key
-  API Keys        │     [ engineering-team_________ ]  [Generate]
-  Setup      ←    │
                   │  3  Claude Code — hook injection
                   │     [↓ settings.json]  [↓ install.sh]
                   │
@@ -91,7 +74,7 @@ Findings show up in the dashboard for the admin to review. Merge the useful ones
 
 ```
 server/
-├── Admin dashboard     ← edit cards, review findings, manage API keys
+├── Admin dashboard     ← edit cards, manage API keys
 ├── Agent API           ← serves the router + cards to Claude Code on demand
 └── Setup flow          ← generates settings.json and install.sh for your team
 
@@ -104,7 +87,7 @@ framework/
     └── onboarding.md
 ```
 
-Five reference cards ship with solid defaults. They work immediately out of the box. Teams improve them over time.
+Five reference cards ship with solid defaults. They work immediately out of the box. Admin updates them in the dashboard — changes are live for the whole team next session.
 
 ## Get started
 
