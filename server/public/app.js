@@ -29,7 +29,7 @@ function timeAgo(iso) {
 }
 
 // ── Routing ────────────────────────────────────────────────────────────────────
-const views = { findings, cards, config, keys, setup };
+const views = { cards, config, keys, setup };
 let currentView = null;
 
 function navigate(view) {
@@ -53,80 +53,6 @@ function navigate(view) {
 document.querySelectorAll('.sidebar-item').forEach(el => {
   el.addEventListener('click', () => navigate(el.dataset.view));
 });
-
-// ── Findings ───────────────────────────────────────────────────────────────────
-async function findings() {
-  main().innerHTML = '<div style="padding:1rem;color:var(--text-muted)">Loading...</div>';
-  const all = await api('GET', '/findings');
-  const pending = all.filter(f => f.status === 'pending');
-  const reviewed = all.filter(f => f.status !== 'pending');
-
-  const badge = $('findings-badge');
-  if (pending.length > 0) {
-    badge.textContent = pending.length;
-    badge.style.display = '';
-  } else {
-    badge.style.display = 'none';
-  }
-
-  main().innerHTML = `
-    ${pending.length > 0 ? `
-    <div class="banner">
-      <div class="banner-title">${pending.length} finding${pending.length !== 1 ? 's' : ''} need${pending.length === 1 ? 's' : ''} your review</div>
-      <div class="banner-body">Your agents surfaced these patterns during recent tasks. Merge the ones worth keeping — they will be added to the relevant reference card and served to all agents on next session.</div>
-    </div>` : ''}
-    <div class="findings-list" id="findings-list">
-      ${pending.map(findingRow).join('')}
-      ${reviewed.length > 0 ? `
-        <div class="section-label">Reviewed</div>
-        ${reviewed.map(findingRow).join('')}
-      ` : ''}
-      ${all.length === 0 ? `<div style="padding:1.25rem 0;max-width:560px">
-        <div style="color:var(--text);font-weight:500;margin-bottom:0.4rem">No findings yet</div>
-        <div style="color:var(--text-muted);line-height:1.6;margin-bottom:1rem">Agents can surface patterns they discover during tasks. You review them here and merge the ones worth keeping — they get appended to the relevant reference card and served to the whole team next session.</div>
-        <div class="snippet">node scripts/contribute-finding.mjs \\
-  --card debugging \\
-  --finding "Check git log before any search — regressions are almost always recent" \\
-  --task "auth token expiry bug"</div>
-      </div>` : ''}
-    </div>
-  `;
-
-  main().querySelectorAll('[data-merge]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      await api('POST', '/findings/' + btn.dataset.merge + '/merge');
-      findings();
-    });
-  });
-  main().querySelectorAll('[data-skip]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      await api('POST', '/findings/' + btn.dataset.skip + '/skip');
-      findings();
-    });
-  });
-}
-
-function findingRow(f) {
-  const reviewed = f.status !== 'pending';
-  return `
-    <div class="finding ${reviewed ? 'reviewed' : ''}">
-      <div class="finding-body">
-        <div class="finding-meta">
-          <span class="tag">${f.card}</span>
-          ${f.status !== 'pending' ? `<span class="tag ${f.status}">${f.status}</span>` : ''}
-          <span class="finding-time">${timeAgo(f.created_at)}${f.task ? ' · ' + f.task : ''}</span>
-        </div>
-        <div class="finding-text">${f.finding}</div>
-        ${!reviewed ? `<div class="finding-dest">Merging adds this to <span>${f.card}.md</span> under "Contributed Patterns"</div>` : ''}
-      </div>
-      ${!reviewed ? `
-      <div class="finding-actions">
-        <button class="btn btn-green" data-merge="${f.id}">Merge</button>
-        <button class="btn btn-ghost" data-skip="${f.id}">Skip</button>
-      </div>` : ''}
-    </div>
-  `;
-}
 
 // ── Cards ──────────────────────────────────────────────────────────────────────
 let editingCard = null;
@@ -619,5 +545,5 @@ if (params.has('first_run') && params.has('key')) {
   keys(params.get('key'));
   history.replaceState({}, '', '/admin');
 } else {
-  navigate('findings');
+  navigate('cards');
 }

@@ -163,26 +163,6 @@ test('GET /api/skill returns hook JSON with valid API key', async () => {
   assert.ok(res.body.hookSpecificOutput.additionalContext.includes('Runtime Router'));
 });
 
-test('POST /api/findings saves finding with valid key', async () => {
-  const { key } = db.addKey('findings-test');
-  const app = await makeTestApp();
-  const res = await request(app, 'POST', '/api/findings', {
-    headers: { 'X-API-Key': key },
-    body: { card: 'debugging', finding: 'Check git log first', task: 'auth bug' },
-  });
-  assert.equal(res.status, 201);
-  assert.ok(res.body.id);
-});
-
-test('POST /api/findings returns 400 if card or finding missing', async () => {
-  const { key } = db.addKey('bad-findings-test');
-  const app = await makeTestApp();
-  const res = await request(app, 'POST', '/api/findings', {
-    headers: { 'X-API-Key': key },
-    body: { card: 'debugging' },
-  });
-  assert.equal(res.status, 400);
-});
 
 test('server seeds config from framework/ on first run', async () => {
   db.setConfig({

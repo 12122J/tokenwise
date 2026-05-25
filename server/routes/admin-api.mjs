@@ -5,34 +5,6 @@ import { hashPassword } from '../middleware/adminAuth.mjs';
 
 export const adminApiRouter = Router();
 
-// ── Findings ──────────────────────────────────────────────────────────────────
-
-adminApiRouter.get('/findings', (req, res) => {
-  res.json(db.getFindings());
-});
-
-adminApiRouter.post('/findings/:id/merge', (req, res) => {
-  const finding = db.getFinding(req.params.id);
-  if (!finding) return res.status(404).json({ error: 'Finding not found' });
-
-  const existing = db.getCard(finding.card) || '';
-  const section = '\n## Contributed Patterns\n';
-  const entry = `\n- ${finding.finding}`;
-
-  const updated = existing.includes('## Contributed Patterns')
-    ? existing.replace(/(## Contributed Patterns\n)/, `$1${entry}\n`)
-    : existing + section + entry + '\n';
-
-  db.setCard(finding.card, updated);
-  db.setFindingStatus(finding.id, 'merged');
-  res.json({ ok: true });
-});
-
-adminApiRouter.post('/findings/:id/skip', (req, res) => {
-  db.setFindingStatus(req.params.id, 'skipped');
-  res.json({ ok: true });
-});
-
 // ── Cards ──────────────────────────────────────────────────────────────────────
 
 adminApiRouter.get('/cards', (req, res) => {
